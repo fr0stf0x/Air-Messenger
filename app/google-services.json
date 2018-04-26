@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "531027137522",
+    "firebase_url": "https://air-messenger-tdt-it.firebaseio.com",
+    "project_id": "air-messenger-tdt-it",
+    "storage_bucket": "air-messenger-tdt-it.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:531027137522:android:02b05a57a2e6a5c0",
+        "android_client_info": {
+          "package_name": "it.tdt.edu.vn.airmessenger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "531027137522-fkf80bqi4dopnctrg4j8qugvtdqr5a2l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCA1bhiEr4_fvVQwrcaJbqNXo6VtiPZaSo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
