@@ -3,7 +3,6 @@ package it.tdt.edu.vn.airmessenger;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +21,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +31,7 @@ import it.tdt.edu.vn.airmessenger.utils.adapters.MainPagerAdapter;
 public class MainActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private FirebaseUser user;
     TabLayout tabLayout;
     ViewPager viewPager;
@@ -43,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         viewPager = findViewById(R.id.viewPager);
         tabLayout = findViewById(R.id.tabLayout);
         adapter = new MainPagerAdapter(getSupportFragmentManager());
@@ -81,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         if (mAuth == null) {
             mAuth = FirebaseAuth.getInstance();
+        }
+        if (db == null) {
+            db = FirebaseFirestore.getInstance();
         }
         updateUI();
     }
@@ -124,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
+                // TODO(2) load conversation list
 
             } else {
                 Log.d(TAG, response.getError().getMessage());
