@@ -1,10 +1,9 @@
 package it.tdt.edu.vn.airmessenger;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,30 +19,61 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.Arrays;
 import java.util.List;
 
+import it.tdt.edu.vn.airmessenger.utils.adapters.MainPagerAdapter;
+
 public class MainActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    TabLayout tabLayout;
     ViewPager viewPager;
+    MainPagerAdapter adapter;
 
-    TextView txtUser;
+
+    private int[] unreadCount = {0, 5};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        txtUser = findViewById(R.id.txtUser);
+
         viewPager = findViewById(R.id.viewPager);
+        tabLayout = findViewById(R.id.tabLayout);
+        adapter = new MainPagerAdapter(getSupportFragmentManager());
+        viewPager.setOffscreenPageLimit(2);
+        viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
+
+        try {
+            setupTabIcons();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                viewPager.setCurrentItem(position, false);
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override
@@ -51,9 +82,9 @@ public class MainActivity extends AppCompatActivity {
         if (mAuth == null) {
             mAuth = FirebaseAuth.getInstance();
         }
-
         updateUI();
     }
+
 
     @Override
     public void onBackPressed() {
@@ -111,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                         .build());
             }
             // TODO(1) update ui
-            txtUser.setText("Hi " + user.getDisplayName());
+//            txtUser.setText("Hi " + user.getDisplayName());
         } else {
             createSignInActivity();
         }
@@ -128,12 +159,10 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
     }
 
     @Override
@@ -141,13 +170,40 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_log_out:
                 signOut();
-                break;
+                return true;
+            case R.id.action_settings:
+                Toast.makeText(this, "Home Settings Click", Toast.LENGTH_SHORT).show();
+                return true;
             default:
-                break;
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    private void setupTabIcons() {
+        for (int i = 0; i < MainPagerAdapter.TITLES.length; i++) {
+            tabLayout.getTabAt(i).setCustomView(prepareTabView(i));
+        }
+    }
+
+    private View prepareTabView(int position) {
+        View view = getLayoutInflater().inflate(R.layout.custom_tab, null);
+        TextView tv_title = (TextView) view.findViewById(R.id.tv_title);
+        TextView tv_count = (TextView) view.findViewById(R.id.tv_count);
+        tv_title.setText(MainPagerAdapter.TITLES[position]);
+        if (unreadCount[position] > 0) {
+            tv_count.setVisibility(View.VISIBLE);
+            tv_count.setText("" + unreadCount[position]);
+//            tv_count.setEnabled(true);
+        } else {
+//            tv_count.setEnabled(false);
+            tv_count.setVisibility(View.GONE);
+        }
+        return view;
     }
 }
 
 // TODO(5) get icon, message images
 // TODO(6) build a welcome activity
+
+
+

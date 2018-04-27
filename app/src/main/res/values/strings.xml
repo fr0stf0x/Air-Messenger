@@ -5,4 +5,10 @@
     <string name="action_settings" translatable="true">Settings</string>
     <string name="dialog_signin_title">Please fill in your information</string>
     <string name="default_username">Not defined</string>
+    <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
+
+    <string-array name="tab_titles">
+        <item name="tab_conversations">CONVERSATIONS</item>
+        <item name="tab_contacts">CONTACTS</item>
+    </string-array>
 </resources>

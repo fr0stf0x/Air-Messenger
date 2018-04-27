@@ -1,4 +1,4 @@
-package it.tdt.edu.vn.airmessenger.utils.Fragments;
+package it.tdt.edu.vn.airmessenger.utils.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,12 +8,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import it.tdt.edu.vn.airmessenger.R;
+
 public class ContactListFragment extends Fragment {
     // TODO(3) HERREEE
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return inflater.inflate(R.layout.contact_list, container, false);
     }
 
     @Override
