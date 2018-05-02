@@ -1,11 +1,30 @@
 <resources>
     <string name="app_name">Air Messenger</string>
 
+    <string name="app_welcome">
+        Welcome to Air Messenger
+    </string>
+    <string name="app_function">
+        This FREE, LIGHT and POWERFUL messenger will help you
+        send and receive your messages PRIVATELY and INSTANTLY
+    </string>
+    <string name="label_activity_chat">Chat</string>
+
+    <string name="button_start">Get started</string>
+
     <string name="action_log_out" translatable="true">Log out</string>
     <string name="action_settings" translatable="true">Settings</string>
-    <string name="dialog_signin_title">Please fill in your information</string>
-    <string name="default_username">Not defined</string>
+    
+    <string name="default_username">Not defined name</string>
+    <string name="default_email">Not defined email</string>
+    <string name="default_status">Hi, i'm using Air Messenger</string>
+
+    
     <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
+    <string name="search_action">Search</string>
+    <string name="edittext_message">Your message ...</string>
+    <string name="button_send">Send</string>
+
 
     <string-array name="tab_titles">
         <item name="tab_conversations">CONVERSATIONS</item>

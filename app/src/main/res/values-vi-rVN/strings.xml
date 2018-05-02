@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Air Messenger</string>
+    <string name="app_welcome">Chào mừng bạn đến với ứng dụng Air Messeng</string>
+
+    <string name="app_function">
+        Gởi và nhận tin nhắn miễn phí nhanh chóng và bảo mật
+        với Air Messenger
+    </string>
+
+    <string name="button_start">Bắt đầu</string>
+
+    <string name="action_log_out" translatable="true">Đăng xuất</string>
+    <string name="action_settings" translatable="true">Cài đặt</string>
+    <string name="dialog_signin_title">Please fill in your information</string>
+    <string name="default_username">Not defined</string>
+
+    <string-array name="tab_titles">
+        <item name="tab_conversations">HỘI THOẠI</item>
+        <item name="tab_contacts">DANH BẠ</item>
+    </string-array>
+</resources>
