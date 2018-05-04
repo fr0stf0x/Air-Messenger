@@ -6,16 +6,19 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class User {
 
+    public static final String COLLECTION_NAME = "users";
+
+    public static final String FIELD_EMAIL = "email";
+    public static final String FIELD_NAME = "name";
+    public static final String FIELD_STATUS = "status";
+    public static final String FIELD_IMAGE = "image";
+    public static final String FIELD_THUMB_IMAGE = "thumb_image";
+
     private String displayName;
     private String image;
     private String thumbImage;
     private String status;
     private String email;
-
-    public static String COLLECTION_NAME = "users";
-    public static String FIELD_EMAIL = "email";
-    public static String FIELD_NAME = "name";
-    public static String FIELD_STATUS = "status";
 
     public User(String displayName) {
         this.displayName = displayName;
@@ -67,10 +70,6 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public void addContact() {
-
     }
 
 }

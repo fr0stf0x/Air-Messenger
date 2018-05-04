@@ -14,16 +14,20 @@
 
     <string name="action_log_out" translatable="true">Log out</string>
     <string name="action_settings" translatable="true">Settings</string>
-    
+
     <string name="default_username">Not defined name</string>
     <string name="default_email">Not defined email</string>
     <string name="default_status">Hi, i'm using Air Messenger</string>
 
-    
+
     <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
     <string name="search_action">Search</string>
-    <string name="edittext_message">Your message ...</string>
+    <string name="compose_hint">Your message ...</string>
     <string name="button_send">Send</string>
+
+    <string name="your_friends">Your friends</string>
+    <string name="default_thumb_image">thumb</string>
+    <string name="default_image">img</string>
 
 
     <string-array name="tab_titles">

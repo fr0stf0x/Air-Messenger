@@ -15,7 +15,6 @@ import com.google.firebase.auth.FirebaseUser;
 import it.tdt.edu.vn.airmessenger.R;
 
 public class ConversationListFragment extends Fragment {
-    // TODO(4) and hereee
     FirebaseUser user;
 
     @Override

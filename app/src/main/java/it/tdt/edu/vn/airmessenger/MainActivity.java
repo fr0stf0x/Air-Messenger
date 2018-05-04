@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -33,7 +34,6 @@ import it.tdt.edu.vn.airmessenger.utils.models.User;
 
 public class MainActivity extends AppCompatActivity {
 
-
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private FirebaseUser user;
@@ -42,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
     TabLayout tabLayout;
     ViewPager viewPager;
     MainPagerAdapter adapter;
-
+    FloatingActionButton fabNewContact;
+    FloatingActionButton fabNewMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +52,15 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager = findViewById(R.id.viewPager);
         tabLayout = findViewById(R.id.tabLayout);
+        fabNewContact = findViewById(R.id.fab_new_contact);
+        fabNewMessage = findViewById(R.id.fab_new_message);
+
         adapter = new MainPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+        setUpFabAnimate();
     }
+
 
     @Override
     protected void onStart() {
@@ -109,18 +115,7 @@ public class MainActivity extends AppCompatActivity {
                         // User already exists
                         Log.d(TAG, "Success! " + document.getId());
                     } else {
-                        // Add new user into database
-                        CollectionReference users = db.collection("users");
-                        HashMap<String, Object> userInfo = new HashMap<>();
-                        userInfo.put(User.FIELD_NAME, user.getDisplayName() == null ?
-                                getResources().getString(R.string.default_username) :
-                                user.getDisplayName());
-                        userInfo.put(User.FIELD_EMAIL, user.getEmail() == null ?
-                                getResources().getString(R.string.default_email) :
-                                user.getEmail());
-                        userInfo.put(User.FIELD_STATUS,
-                                getResources().getString(R.string.default_status));
-                        users.document(user.getUid()).set(userInfo);
+                        initUser();
                     }
                 } else {
                     Log.d(TAG, "Failed! ");
@@ -129,12 +124,38 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    Init UserInfo in Firebase Firestore
+     */
+    private void initUser() {
+        CollectionReference users = db.collection("users");
+        HashMap<String, Object> userInfo = new HashMap<>();
+        userInfo.put(User.FIELD_NAME, user.getDisplayName() == null ?
+                getResources().getString(R.string.default_username) :
+                user.getDisplayName());
+        userInfo.put(User.FIELD_EMAIL, user.getEmail() == null ?
+                getResources().getString(R.string.default_email) :
+                user.getEmail());
+        userInfo.put(User.FIELD_STATUS,
+                getResources().getString(R.string.default_status));
+        users.document(user.getUid()).set(userInfo);
+        userInfo.put(User.FIELD_THUMB_IMAGE,
+                getResources().getString(R.string.default_thumb_image));
+        users.document(user.getUid()).set(userInfo);
+        userInfo.put(User.FIELD_IMAGE,
+                getResources().getString(R.string.default_image));
+        users.document(user.getUid()).set(userInfo);
+    }
+
     private void backToWelcomeScreen() {
         Intent intent = new Intent(this, StartActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
+    /*
+    Sign out with Firebase AuthUI
+     */
     private void signOut() {
         AuthUI.getInstance()
                 .signOut(this)
@@ -169,11 +190,65 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_settings:
 //                Toast.makeText(this, "Home Settings Click", Toast.LENGTH_SHORT).show();
+                // Testing
                 Intent intent = new Intent(MainActivity.this, ChatActivity.class);
                 startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void setUpFabAnimate() {
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                animateFab(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                animateFab(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+    private void animateFab(int position) {
+        switch (position) {
+            case 0:
+                fabNewMessage.show();
+                fabNewContact.hide();
+                break;
+            case 1:
+                fabNewContact.show();
+                fabNewMessage.hide();
+                break;
+            default:
+                fabNewMessage.show();
+                fabNewContact.hide();
+                break;
         }
     }
 }

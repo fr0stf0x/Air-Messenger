@@ -5,16 +5,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import it.tdt.edu.vn.airmessenger.utils.fragments.ContactListFragment;
+import it.tdt.edu.vn.airmessenger.utils.fragments.UserListFragment;
 import it.tdt.edu.vn.airmessenger.utils.fragments.ConversationListFragment;
 
 public class MainPagerAdapter extends FragmentStatePagerAdapter {
 
     final Fragment[] FRAGMENTS = {
             new ConversationListFragment(),
-            new ContactListFragment()
+            new UserListFragment()
     };
-    public static String[] TITLES = {"CONVERSATIONS", "CONTACTS"};
+    public static String[] TITLES = {"CONVERSATIONS", "FRIENDS", "PEOPLE"};
 
     // TODO(2) do something
 
