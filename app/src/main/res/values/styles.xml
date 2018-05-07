@@ -9,13 +9,30 @@
         <item name="actionBarStyle">@style/AppBarOverlay</item>
     </style>
 
-    <style name="tab_item">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
     <style name="AppBarOverlay" parent="Widget.AppCompat.Light.ActionBar.Solid">
         <item name="elevation">0dp</item>
+    </style>
+
+    <style name="OvalBox48dp">
+        <item name="android:background">@drawable/chat_bottom_bar</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
+
+    <style name="NoVerticalPaddingOvalBox48dp">
+        <item name="android:background">@drawable/chat_bottom_bar</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+    </style>
+
+    <style name="Circle48dp">
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:background">@drawable/circle_shape_48dp</item>
     </style>
 
 </resources>

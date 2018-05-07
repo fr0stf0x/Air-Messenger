@@ -59,7 +59,7 @@ public class StartActivity extends AppCompatActivity {
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
-                // Successfully signed in
+                // Successfully signed in, back to Main Screen
                 finish();
             } else {
                 Log.d(TAG, response.getError().getMessage());

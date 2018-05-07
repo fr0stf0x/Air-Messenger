@@ -3,16 +3,17 @@ package it.tdt.edu.vn.airmessenger;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -21,7 +22,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -29,10 +29,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 
-import it.tdt.edu.vn.airmessenger.utils.adapters.MainPagerAdapter;
-import it.tdt.edu.vn.airmessenger.utils.models.User;
+import it.tdt.edu.vn.airmessenger.adapters.MainPagerAdapter;
+import it.tdt.edu.vn.airmessenger.models.User;
 
 public class MainActivity extends AppCompatActivity {
+
+    final int CONVERSATION_PAGE = 0;
+    final int CONTACT_PAGE = 1;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -58,7 +61,14 @@ public class MainActivity extends AppCompatActivity {
         adapter = new MainPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-        setUpFabAnimate();
+        setupFloatingActionButton();
+    }
+
+    private void setupFloatingActionButton() {
+        fabNewMessage.show();
+        fabNewContact.hide();
+        setupFabAnimation();
+        setupFabAction();
     }
 
 
@@ -74,6 +84,17 @@ public class MainActivity extends AppCompatActivity {
         updateUI();
     }
 
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            int currentPage = savedInstanceState.getInt(MainPagerAdapter.CURRENT_PAGE_NUMBER_KEY);
+            viewPager.setCurrentItem(currentPage);
+            Log.d("Get " + MainPagerAdapter.CURRENT_PAGE_NUMBER_KEY, currentPage + "");
+        }
+
+    }
 
     @Override
     public void onBackPressed() {
@@ -153,6 +174,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(MainPagerAdapter.CURRENT_PAGE_NUMBER_KEY, viewPager.getCurrentItem());
+        Log.d("Set " + MainPagerAdapter.CURRENT_PAGE_NUMBER_KEY, viewPager.getCurrentItem() + "");
+    }
+
     /*
     Sign out with Firebase AuthUI
      */
@@ -170,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+
         // Associate searchable configuration with the SearchView
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -190,7 +219,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_settings:
 //                Toast.makeText(this, "Home Settings Click", Toast.LENGTH_SHORT).show();
-                // Testing
                 Intent intent = new Intent(MainActivity.this, ChatActivity.class);
                 startActivity(intent);
                 return true;
@@ -199,11 +227,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setUpFabAnimate() {
+    private void setupFabAction() {
+        fabNewContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AllUsersActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        fabNewMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(CONTACT_PAGE);
+            }
+        });
+    }
+
+    private void setupFabAnimation() {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
@@ -213,7 +257,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
 
@@ -225,12 +268,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
     }
@@ -252,9 +293,3 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
-
-// TODO(5) get icon, message images
-// TODO(6) build a welcome activity
-
-
-

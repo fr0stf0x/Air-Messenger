@@ -2,21 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="8dp"
     android:orientation="horizontal">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:id="@+id/ivAvatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_margin="8dp"
+        style="@style/Circle48dp"
+        android:layout_marginEnd="8dp"
         android:gravity="center"
-        android:src="@mipmap/contact_icon" />
+        android:scaleType="center"
+        android:src="@drawable/ic_person_outline_white_24dp" />
 
     <LinearLayout
+        style="@style/NoVerticalPaddingOvalBox48dp"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:layout_weight="1"
+        android:backgroundTint="@color/colorPrimary"
         android:orientation="vertical">
 
         <TextView
@@ -24,14 +27,16 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            style="@style/TextAppearance.AppCompat.Title"
-            android:text="@string/default_username"/>
+            android:text="@string/default_username"
+            android:textAppearance="@android:style/TextAppearance.Material.Display2"
+            android:textSize="@dimen/large_text" />
 
         <TextView
             android:id="@+id/tvStatus"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="@string/default_status" />
+            android:text="@string/default_status"
+            android:textColor="@android:color/black" />
     </LinearLayout>
 </LinearLayout>

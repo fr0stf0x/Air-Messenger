@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
     android:orientation="horizontal">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:id="@+id/imgUserAvatar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="10dp"
-        android:src="@drawable/ic_contact" />
+        style="@style/Circle48dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:scaleType="center"
+        android:src="@drawable/ic_person_outline_white_24dp" />
 
     <LinearLayout
+        style="@style/NoVerticalPaddingOvalBox48dp"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -27,9 +30,9 @@
                 android:id="@+id/tvUser"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:text="Username"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                android:layout_weight="3"
+                android:text="@string/default_username"
+                android:textSize="@dimen/large_text" />
 
             <TextView
                 android:id="@+id/tvLastMsgTime"

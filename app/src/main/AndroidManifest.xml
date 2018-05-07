@@ -22,13 +22,20 @@
         <activity android:name=".StartActivity" />
         <activity
             android:name=".ChatActivity"
-            android:label="@string/label_activity_chat"
+            android:label="@string/activity_chat_label"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".AllUsersActivity"></activity>
+        <activity
+            android:name=".AllUsersActivity"
+            android:label="@string/activity_all_users_label"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
     </application>
 
 </manifest>
