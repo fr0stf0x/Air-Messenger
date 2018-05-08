@@ -1,8 +1,6 @@
 package it.tdt.edu.vn.airmessenger;
 
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,11 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import it.tdt.edu.vn.airmessenger.loaders.Loader;
@@ -61,7 +55,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (user != null) {
-                    Toast.makeText(getApplicationContext(), user.getDisplayName() + "", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), user.getName() + "", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(ChatActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                 }
@@ -71,22 +65,22 @@ public class ChatActivity extends AppCompatActivity {
 
     private void setTitle(final ActionBar actionBar) {
         Intent intent = getIntent();
-        if (intent != null) {
-            String userId = intent.getStringExtra(User.FIELD_ID);
-            user = new User(userId);
-            DocumentReference document = colRef.document(userId);
-            loader.load(document).into(user);
-            document.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        actionBar.setTitle(task.getResult().getString(User.FIELD_NAME));
-                    }
-                }
-            });
-        } else {
-            actionBar.setTitle(getResources().getString(R.string.activity_chat_label));
-        }
+//        if (intent != null) {
+//            String userId = intent.getStringExtra(User.FIELD_ID);
+////            user = new User(userId);
+//            DocumentReference document = colRef.document(userId);
+//            loader.load(document).into(user);
+//            document.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                @Override
+//                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                    if (task.isSuccessful()) {
+//                        actionBar.setTitle(task.getResult().getString(User.FIELD_NAME));
+//                    }
+//                }
+//            });
+//        } else {
+//            actionBar.setTitle(getResources().getString(R.string.activity_chat_label));
+//        }
     }
 }
 

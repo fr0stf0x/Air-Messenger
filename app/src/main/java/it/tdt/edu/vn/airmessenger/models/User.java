@@ -1,42 +1,43 @@
 package it.tdt.edu.vn.airmessenger.models;
 
-import android.support.annotation.NonNull;
+import com.google.firebase.firestore.IgnoreExtraProperties;
 
-import com.google.firebase.auth.FirebaseUser;
-
+@IgnoreExtraProperties
 public class User {
 
     public static final String COLLECTION_NAME = "users";
 
-    public static final String FIELD_ID = "user_id";
     public static final String FIELD_EMAIL = "email";
     public static final String FIELD_NAME = "name";
     public static final String FIELD_STATUS = "status";
     public static final String FIELD_IMAGE = "image";
-    public static final String FIELD_THUMB_IMAGE = "thumb_image";
+    public static final String FIELD_THUMB_IMAGE = "thumbImage";
+    public static final String FIELD_SEX = "sex";
+    public static final String FIELD_AGE = "age";
 
-    private String userId;
-    private String displayName;
+    public static final int SEX_MALE = 1;
+    public static final int SEX_FEMALE = 0;
+    public static final int SEX_UNKNOWN = -1;
+
+    private String name;
     private String image;
     private String thumbImage;
     private String status;
     private String email;
+    private int age;
+    private int sex;
 
-    public User(String userId) {
-        this.userId = userId;
+    public User() {
     }
 
-    public User(final String userId, String displayName, String email, String status, String image, String thumbImage) {
-        this.userId = userId;
-        this.displayName = displayName;
+    public User(String name, String email, String status, String image, String thumbImage, int sex, int age) {
+        this.name = name;
         this.email = email;
         this.image = image;
         this.thumbImage = thumbImage;
         this.status = status;
-    }
-
-    public String getUserId() {
-        return userId;
+        this.sex = sex;
+        this.age = age;
     }
 
     public String getEmail() {
@@ -47,12 +48,12 @@ public class User {
         this.email = email;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getImage() {
@@ -79,4 +80,19 @@ public class User {
         this.status = status;
     }
 
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public int getSex() {
+        return sex;
+    }
+
+    public void setSex(int sex) {
+        this.sex = sex;
+    }
 }

@@ -1,31 +1,35 @@
 package it.tdt.edu.vn.airmessenger.adapters;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
 
-import it.tdt.edu.vn.airmessenger.ChatActivity;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import it.tdt.edu.vn.airmessenger.R;
-import it.tdt.edu.vn.airmessenger.fragments.UserListFragment;
-import it.tdt.edu.vn.airmessenger.interfaces.UserClickHandler;
 import it.tdt.edu.vn.airmessenger.models.User;
 
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
+public class UserAdapter extends FirestoreAdapter<UserAdapter.UserViewHolder> {
+    public static final String TAG = "UserAdapter";
 
-    private ArrayList<User> users;
-    private UserClickHandler handler;
+    public interface OnUserClickListener {
+        void onUserClick(DocumentSnapshot user);
+    }
+
+    private OnUserClickListener mListener;
     private int flag;
 
-    public UserAdapter(ArrayList<User> users, int flag) {
-        this.users = users;
+    public UserAdapter(Query query, OnUserClickListener listener, int flag) {
+        super(query);
+        this.mListener = listener;
     }
 
     @NonNull
@@ -38,55 +42,47 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, final int position) {
-        final User user = users.get(position);
-
-        holder.tvUser.setText(user.getDisplayName());
-        holder.tvStatus.setText(user.getStatus());
-
-        // TODO(1) parse image and thumb image
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                switch (flag) {
-                    case UserListFragment.USERS_FLAG:
-
-                    case UserListFragment.FRIENDS_FLAG:
-                        Intent intent = new Intent(v.getContext(), ChatActivity.class);
-                        intent.putExtra(User.FIELD_ID, user.getUserId());
-                        v.getContext().startActivity(intent);
-                }
-            }
-        });
+        holder.bind(getSnapshot(position), mListener);
     }
 
-    @Override
-    public int getItemCount() {
-        return users.size();
-    }
+    static class UserViewHolder extends RecyclerView.ViewHolder {
 
-    public void setHandler(UserClickHandler handler) {
-        this.handler = handler;
-    }
-
-    public void setUsers(ArrayList<User> users) {
-        this.users = users;
-    }
-
-    public ArrayList<User> getUsers() {
-        return users;
-    }
-
-    class UserViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.tvUser)
         TextView tvUser;
+
+        @BindView(R.id.tvStatus)
         TextView tvStatus;
+
+        @BindView(R.id.ivAvatar)
         ImageView ivAvatar;
 
         public UserViewHolder(View itemView) {
             super(itemView);
-            this.tvUser = itemView.findViewById(R.id.tvUser);
-            this.tvStatus = itemView.findViewById(R.id.tvStatus);
-            this.ivAvatar = itemView.findViewById(R.id.ivAvatar);
+            ButterKnife.bind(this, itemView);
+        }
+
+        protected void bind(
+                final DocumentSnapshot userSnapshot,
+                final OnUserClickListener listener) {
+
+            User user = userSnapshot.toObject(User.class);
+            if (user == null) {
+                Log.d(TAG, "something wrong");
+            }
+            tvUser.setText(user.getName());
+            Log.d(TAG, user.getName());
+            tvStatus.setText(user.getStatus());
+
+            itemView.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (listener != null) {
+                                listener.onUserClick(userSnapshot);
+                            }
+                        }
+                    }
+            );
         }
     }
 }

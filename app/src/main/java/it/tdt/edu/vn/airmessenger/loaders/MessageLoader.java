@@ -49,16 +49,11 @@ public class MessageLoader extends Loader {
                             String receiveUser = doc.getString(Message.FIELD_RECEIVE_USER);
                             String content = doc.getString(Message.FIELD_CONTENT);
                             String time = doc.getString(Message.FIELD_TIME);
-                            Message newMessage = new Message(
-                                    sendUser,
-                                    receiveUser,
-                                    content,
-                                    time
-                            );
-                            result.add(newMessage);
+
+                            result.add(null);
                         }
-                        MessageAdapter adapter = new MessageAdapter(result);
-                        recyclerView.setAdapter(adapter);
+//                        MessageAdapter adapter = new MessageAdapter(result);
+//                        recyclerView.setAdapter(adapter);
                         Log.d(TAG, result.size() + " messages fetched");
                     } else {
                         Log.d(TAG, "Empty collection");
@@ -69,6 +64,8 @@ public class MessageLoader extends Loader {
             }
         });
     }
+
+    // TODO edit here
 
     @Override
     public void into(Object object) {

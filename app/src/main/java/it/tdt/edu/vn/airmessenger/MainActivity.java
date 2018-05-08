@@ -9,7 +9,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,9 +25,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.util.HashMap;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import it.tdt.edu.vn.airmessenger.adapters.MainPagerAdapter;
 import it.tdt.edu.vn.airmessenger.models.User;
 
@@ -41,25 +43,29 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseUser user;
 
-    Toolbar toolbar;
+    @BindView(R.id.tabLayout)
     TabLayout tabLayout;
+
+    @BindView(R.id.viewPager)
     ViewPager viewPager;
-    MainPagerAdapter adapter;
+
+    @BindView(R.id.fab_new_contact)
     FloatingActionButton fabNewContact;
+
+    @BindView(R.id.fab_new_message)
     FloatingActionButton fabNewMessage;
+
+    MainPagerAdapter pagerAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        viewPager = findViewById(R.id.viewPager);
-        tabLayout = findViewById(R.id.tabLayout);
-        fabNewContact = findViewById(R.id.fab_new_contact);
-        fabNewMessage = findViewById(R.id.fab_new_message);
-
-        adapter = new MainPagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(adapter);
+        ButterKnife.bind(this);
+        pagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
         setupFloatingActionButton();
     }
@@ -133,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        // User already exists
+                        // TODO User already exists
                         Log.d(TAG, "Success! " + document.getId());
                     } else {
                         initUser();
@@ -145,8 +151,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+
     /*
-    Init UserInfo in Firebase Firestore
+    Init UserInfoActivity in Firebase Firestore
      */
     private void initUser() {
         CollectionReference users = db.collection("users");
@@ -159,12 +167,10 @@ public class MainActivity extends AppCompatActivity {
                 user.getEmail());
         userInfo.put(User.FIELD_STATUS,
                 getResources().getString(R.string.default_status));
-        users.document(user.getUid()).set(userInfo);
         userInfo.put(User.FIELD_THUMB_IMAGE,
                 getResources().getString(R.string.default_thumb_image));
-        users.document(user.getUid()).set(userInfo);
         userInfo.put(User.FIELD_IMAGE,
-                getResources().getString(R.string.default_image));
+                getResources().getIdentifier("ic_person_outline_white_24dp", "drawable", getPackageName()));
         users.document(user.getUid()).set(userInfo);
     }
 

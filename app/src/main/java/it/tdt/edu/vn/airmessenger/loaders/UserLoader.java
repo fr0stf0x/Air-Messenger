@@ -1,21 +1,16 @@
 package it.tdt.edu.vn.airmessenger.loaders;
 
-import android.app.ActionBar;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-import it.tdt.edu.vn.airmessenger.adapters.UserAdapter;
 import it.tdt.edu.vn.airmessenger.models.User;
 
 public class UserLoader extends Loader {
@@ -55,18 +50,11 @@ public class UserLoader extends Loader {
                             String userStatus = doc.getString(User.FIELD_STATUS);
                             String userAvatar = doc.getString(User.FIELD_IMAGE);
                             String userThumbImg = doc.getString(User.FIELD_THUMB_IMAGE);
-                            User newUser = new User(
-                                    userId,
-                                    userName,
-                                    userEmail,
-                                    userStatus,
-                                    userAvatar,
-                                    userThumbImg
-                            );
-                            result.add(newUser);
+
+
                         }
-                        UserAdapter adapter = new UserAdapter(result, flag);
-                        recyclerView.setAdapter(adapter);
+//                        UserAdapter adapter = new UserAdapter(result, flag);
+//                        recyclerView.setAdapter(adapter);
                         Log.d(TAG, result.size() + " users fetched");
                     } else {
                         Log.d(TAG, "Empty collection");
@@ -93,9 +81,7 @@ public class UserLoader extends Loader {
                         String userAvatar = doc.getString(User.FIELD_IMAGE);
                         String userThumbImg = doc.getString(User.FIELD_THUMB_IMAGE);
 
-                        user = new User(doc.getId());
-
-                        ((User) object).setDisplayName(userName);
+                        ((User) object).setName(userName);
                         ((User) object).setEmail(userEmail);
                         ((User) object).setStatus(userStatus);
                         ((User) object).setImage(userAvatar);
@@ -121,12 +107,7 @@ public class UserLoader extends Loader {
                     String userStatus = doc.getString(User.FIELD_STATUS);
                     String userAvatar = doc.getString(User.FIELD_IMAGE);
                     String userThumbImg = doc.getString(User.FIELD_THUMB_IMAGE);
-                    user = new User(doc.getId(),
-                            userName,
-                            userEmail,
-                            userStatus,
-                            userAvatar,
-                            userThumbImg);
+
                     Log.d(TAG, userName);
                 } else {
                     Log.d(TAG, "failed get single data");

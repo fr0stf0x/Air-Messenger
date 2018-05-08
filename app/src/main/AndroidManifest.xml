@@ -20,6 +20,7 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".StartActivity" />
+
         <activity
             android:name=".ChatActivity"
             android:label="@string/activity_chat_label"
@@ -28,6 +29,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
         <activity
             android:name=".AllUsersActivity"
             android:label="@string/activity_all_users_label"
@@ -36,6 +38,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
+        <activity
+            android:name=".UserInfoActivity"
+            android:label="@string/activity_user_info_label"></activity>
     </application>
 
 </manifest>

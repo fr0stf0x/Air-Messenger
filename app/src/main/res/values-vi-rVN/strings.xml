@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Air Messenger</string>
+
     <string name="app_welcome">Chào mừng bạn đến với ứng dụng Air Messeng</string>
 
     <string name="app_function">
@@ -8,15 +8,26 @@
         với Air Messenger
     </string>
 
-    <string name="button_start">Bắt đầu</string>
-
     <string name="action_log_out" translatable="true">Đăng xuất</string>
     <string name="action_settings" translatable="true">Cài đặt</string>
-    <string name="dialog_signin_title">Please fill in your information</string>
-    <string name="default_username">Not defined</string>
+    <string name="action_search">Tìm kiếm</string>
 
-    <string-array name="tab_titles">
-        <item name="tab_conversations">HỘI THOẠI</item>
-        <item name="tab_contacts">DANH BẠ</item>
-    </string-array>
+    <string name="default_username">Không xác định tên</string>
+    <string name="default_email">Không xác định email</string>
+    <string name="default_status">Xin chào. Tôi đang sử dụng Air Messenger</string>
+    <string name="default_sex">Giới tính không xác định</string>
+    <string name="default_age">Tuổi không xác định</string>
+
+    <string name="compose_hint">Soạn tin nhắn ...</string>
+
+    <string name="button_start">Bắt đầu</string>
+    <string name="button_send">Gởi</string>
+    <string name="button_add_friend">Thêm bạn bè</string>
+
+    <string name="activity_chat_label">Tin nhắn mới</string>
+    <string name="activity_all_users_label">"Khám phá "</string>
+    <string name="activity_user_info_label">Thông tin người dùng</string>
+
+    <string name="back_again_to_exit">Nhấn QUAY LẠI một lần nữa để thoát ứng dụng</string>
+
 </resources>
