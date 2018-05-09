@@ -1,0 +1,170 @@
+package it.tdt.edu.vn.airmessenger.fragments;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+
+import java.util.Locale;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import it.tdt.edu.vn.airmessenger.R;
+import it.tdt.edu.vn.airmessenger.adapters.FriendRequestAdapter;
+import it.tdt.edu.vn.airmessenger.models.FriendRequest;
+import it.tdt.edu.vn.airmessenger.models.User;
+
+public class FriendsFragment extends Fragment implements FriendRequestAdapter.FriendRequestHandler {
+
+    public static final String REQUEST_TAG = "FriendRequest";
+    public static final String FRIEND_TAG = "FriendList";
+
+    @BindView(R.id.frameAllFriends)
+    FrameLayout frameAllFriends;
+
+    @BindView(R.id.tvNotification)
+    TextView tvNotification;
+
+    @BindView(R.id.requestList)
+    RecyclerView requestList;
+
+    FirebaseUser user;
+    FirebaseFirestore db;
+
+    FragmentManager fm;
+    FragmentTransaction ft;
+
+    Query mQuery;
+
+    FriendRequestAdapter adapter;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (adapter != null) {
+            adapter.startListening();
+            Log.d(REQUEST_TAG, "FriendRequestAdapter started listening");
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (adapter != null) {
+            adapter.stopListening();
+            Log.d(REQUEST_TAG, "FriendRequestAdapter stopped listening");
+        }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.friend_fragment_layout, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (user != null) {
+            ButterKnife.bind(this, view);
+
+            fm = getChildFragmentManager();
+            ft = fm.beginTransaction();
+
+            ft.replace(R.id.frameAllFriends,
+                    new UserListFragment(),
+                    UserListFragment.TAG)
+                    .commit();
+
+            mQuery = db.collection(User.COLLECTION_NAME)
+                    .document(user.getUid())
+                    .collection(FriendRequest.COLLECTION_NAME);
+
+            adapter = new FriendRequestAdapter(mQuery, this) {
+                @Override
+                protected void onDataChanged() {
+                    if (adapter.getItemCount() == 0) {
+                        Log.d(REQUEST_TAG, "Empty requests");
+                        tvNotification.setVisibility(View.GONE);
+                        requestList.setVisibility(View.GONE);
+                    } else {
+                        Log.d(REQUEST_TAG, getItemCount() + " new requests");
+                        tvNotification.setText(String.format(Locale.getDefault(),
+                                "%d %s", adapter.getItemCount(),
+                                getResources().getString(R.string.friend_request_notification)));
+                        tvNotification.setVisibility(View.VISIBLE);
+                        requestList.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                protected void onError(FirebaseFirestoreException e) {
+                    Log.d(REQUEST_TAG, "Error occurred");
+                }
+            };
+            requestList.setLayoutManager(new LinearLayoutManager(getContext()));
+            requestList.setAdapter(adapter);
+            Log.d(REQUEST_TAG, "Adapter created");
+        }
+    }
+
+    @Override
+    public void onFriendRequestAcceptedListener(DocumentSnapshot user) {
+
+        // TODO add friend
+        // Write to friend_database, delete in request_database
+        final DocumentReference thisUserRef = db.collection(User.COLLECTION_NAME)
+                .document(this.user.getUid());
+        db.collection(User.COLLECTION_NAME).document(user.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                User user = task.getResult().toObject(User.class);
+//                thisUserRef.collection(UserListFragment.COLLECTION_NAME)
+//                        .document(u).set(user);
+//                String notification = String.format(Locale.getDefault(),
+//                        "%s - ID %s is added to friend list",
+//                        user.get(FriendRequest.FIELD_USER_NAME),
+//                        user.getId());
+//                Log.d(REQUEST_TAG, notification);
+//                Toast.makeText(getContext(), notification, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onFriendRequestRejectedListener() {
+        // delete in request
+
+    }
+}

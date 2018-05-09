@@ -7,14 +7,14 @@
 
     <ImageView
         android:id="@+id/imgUserAvatar"
-        style="@style/Circle48dp"
+        style="@style/Circle52dp"
         android:layout_marginEnd="8dp"
         android:gravity="center"
         android:scaleType="center"
         android:src="@drawable/ic_person_outline_white_24dp" />
 
     <LinearLayout
-        style="@style/NoVerticalPaddingOvalBox48dp"
+        style="@style/NoVerticalPaddingOvalBox52dp"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

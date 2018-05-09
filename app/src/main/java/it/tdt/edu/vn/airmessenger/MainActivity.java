@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (viewPager.getCurrentItem() == 0) {
-            // If the user is currently looking at the first step, allow the system to handle the
+            // If the refUser is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
         } else {
@@ -151,10 +151,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-
     /*
-    Init UserInfoActivity in Firebase Firestore
+    Init UserInfo in Firebase Firestore
      */
     private void initUser() {
         CollectionReference users = db.collection("users");
@@ -167,10 +165,12 @@ public class MainActivity extends AppCompatActivity {
                 user.getEmail());
         userInfo.put(User.FIELD_STATUS,
                 getResources().getString(R.string.default_status));
+        userInfo.put(User.FIELD_AGE, getResources().getInteger(R.integer.default_age));
+        userInfo.put(User.FIELD_SEX, getResources().getString(R.string.sex_unknown));
         userInfo.put(User.FIELD_THUMB_IMAGE,
                 getResources().getString(R.string.default_thumb_image));
         userInfo.put(User.FIELD_IMAGE,
-                getResources().getIdentifier("ic_person_outline_white_24dp", "drawable", getPackageName()));
+                getResources().getString(R.string.default_image));
         users.document(user.getUid()).set(userInfo);
     }
 

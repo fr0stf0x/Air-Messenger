@@ -66,10 +66,10 @@ public class ChatActivity extends AppCompatActivity {
     private void setTitle(final ActionBar actionBar) {
         Intent intent = getIntent();
 //        if (intent != null) {
-//            String userId = intent.getStringExtra(User.FIELD_ID);
-////            user = new User(userId);
-//            DocumentReference document = colRef.document(userId);
-//            loader.load(document).into(user);
+//            String refUserId = intent.getStringExtra(User.FIELD_ID);
+////            refUser = new User(refUserId);
+//            DocumentReference document = colRef.document(refUserId);
+//            loader.load(document).into(refUser);
 //            document.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 //                @Override
 //                public void onComplete(@NonNull Task<DocumentSnapshot> task) {

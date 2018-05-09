@@ -6,6 +6,7 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 public class User {
 
     public static final String COLLECTION_NAME = "users";
+    public static final String USER_ID_KEY = "userId";
 
     public static final String FIELD_EMAIL = "email";
     public static final String FIELD_NAME = "name";
@@ -15,22 +16,18 @@ public class User {
     public static final String FIELD_SEX = "sex";
     public static final String FIELD_AGE = "age";
 
-    public static final int SEX_MALE = 1;
-    public static final int SEX_FEMALE = 0;
-    public static final int SEX_UNKNOWN = -1;
-
     private String name;
     private String image;
     private String thumbImage;
     private String status;
     private String email;
     private int age;
-    private int sex;
+    private String sex;
 
     public User() {
     }
 
-    public User(String name, String email, String status, String image, String thumbImage, int sex, int age) {
+    public User(String name, String email, String status, String image, String thumbImage, String sex, int age) {
         this.name = name;
         this.email = email;
         this.image = image;
@@ -88,11 +85,11 @@ public class User {
         this.age = age;
     }
 
-    public int getSex() {
+    public String getSex() {
         return sex;
     }
 
-    public void setSex(int sex) {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 }

@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 
 import it.tdt.edu.vn.airmessenger.AllUsersActivity;
+import it.tdt.edu.vn.airmessenger.ChatActivity;
 import it.tdt.edu.vn.airmessenger.R;
 import it.tdt.edu.vn.airmessenger.UserInfoActivity;
 import it.tdt.edu.vn.airmessenger.adapters.UserAdapter;
@@ -44,7 +46,7 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserClic
 
     RecyclerView rvContacts;
 
-    ProgressBar progressBar;
+    TextView tvEmptyList;
 
     UserAdapter adapter;
     Query mQuery;
@@ -85,13 +87,17 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserClic
 
     @Override
     public void onUserClick(DocumentSnapshot user) {
+        Intent intent;
         switch (flag) {
             case USERS_FLAG:
-                Intent intent = new Intent(getContext(), UserInfoActivity.class);
-                intent.putExtra(UserInfoActivity.USER_ID_KEY, user.getId());
-                startActivity(intent);
-            case FRIENDS_FLAG:
+                intent = new Intent(getContext(), UserInfoActivity.class);
+                break;
+            default:
+                intent = new Intent(getContext(), ChatActivity.class);
+                break;
         }
+        intent.putExtra(User.USER_ID_KEY, user.getId());
+        startActivity(intent);
     }
 
     @Nullable
@@ -104,7 +110,7 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserClic
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        progressBar = view.findViewById(R.id.pb_loading);
+        tvEmptyList = view.findViewById(R.id.tvEmptyList);
         rvContacts = view.findViewById(R.id.userList);
 
         if (user != null) {
@@ -126,16 +132,18 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserClic
                 protected void onDataChanged() {
                     if (getItemCount() == 0) {
                         rvContacts.setVisibility(View.GONE);
-                        progressBar.setVisibility(View.VISIBLE);
+                        tvEmptyList.setVisibility(View.VISIBLE);
                     } else {
                         rvContacts.setVisibility(View.VISIBLE);
-                        progressBar.setVisibility(View.GONE);
+                        tvEmptyList.setVisibility(View.GONE);
                     }
                 }
 
                 @Override
                 protected void onError(FirebaseFirestoreException e) {
                     Log.d(TAG, "Error: check logs for info.");
+                    rvContacts.setVisibility(View.GONE);
+                    tvEmptyList.setVisibility(View.GONE);
                 }
             };
 

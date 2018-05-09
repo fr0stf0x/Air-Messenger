@@ -52,8 +52,8 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btnAddFriend"
-        style="@style/OvalBox48dp"
+        android:id="@+id/btn_add_friend"
+        style="@style/OvalBox52dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
@@ -75,7 +75,7 @@
         android:layout_marginStart="8dp"
         android:text="@string/default_age"
         android:textSize="@dimen/large_text"
-        app:layout_constraintBottom_toTopOf="@+id/btnAddFriend"
+        app:layout_constraintBottom_toTopOf="@+id/btn_add_friend"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

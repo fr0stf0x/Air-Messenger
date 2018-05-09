@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/tvNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/oval_any_dp"
+        android:backgroundTint="@color/colorRed"
+        android:padding="8dp"
+        android:text="@string/friend_request_notification"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/extra_large_text" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/requestList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <FrameLayout
+        android:id="@+id/frameAllFriends"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

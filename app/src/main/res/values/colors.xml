@@ -14,5 +14,8 @@
 
     <color name="chat_bubble_outgoing">#DCF8C6</color>
 
+    <color name="colorWhite">@android:color/white</color>
+
+    <color name="colorCircleShape">#00695c</color>
 
 </resources>

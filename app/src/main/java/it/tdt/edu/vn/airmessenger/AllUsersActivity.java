@@ -18,7 +18,7 @@ import it.tdt.edu.vn.airmessenger.adapters.UserAdapter;
 import it.tdt.edu.vn.airmessenger.fragments.UserListFragment;
 import it.tdt.edu.vn.airmessenger.models.User;
 
-public class AllUsersActivity extends AppCompatActivity implements UserAdapter.OnUserClickListener {
+public class AllUsersActivity extends AppCompatActivity {
 
     public final String TAG = "AllUsersActivity";
 
@@ -53,10 +53,5 @@ public class AllUsersActivity extends AppCompatActivity implements UserAdapter.O
         fragmentManager = getSupportFragmentManager();
         ft = fragmentManager.beginTransaction();
         ft.replace(R.id.fragment_all_users, userListFragment, TAG).commit();
-    }
-
-    @Override
-    public void onUserClick(DocumentSnapshot user) {
-
     }
 }

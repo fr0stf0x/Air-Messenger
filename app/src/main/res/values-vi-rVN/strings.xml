@@ -12,22 +12,33 @@
     <string name="action_settings" translatable="true">Cài đặt</string>
     <string name="action_search">Tìm kiếm</string>
 
+    <!--Sex value-->
+    <string name="sex_male">Nam</string>
+    <string name="sex_female">Nữ</string>
+    <string name="sex_unknown">Giới tính không xác định</string>
+
     <string name="default_username">Không xác định tên</string>
     <string name="default_email">Không xác định email</string>
     <string name="default_status">Xin chào. Tôi đang sử dụng Air Messenger</string>
     <string name="default_sex">Giới tính không xác định</string>
     <string name="default_age">Tuổi không xác định</string>
 
-    <string name="compose_hint">Soạn tin nhắn ...</string>
+    <string name="compose_hint">Soạn tin nhắn (&#8230;)</string>
 
     <string name="button_start">Bắt đầu</string>
     <string name="button_send">Gởi</string>
     <string name="button_add_friend">Thêm bạn bè</string>
+    <string name="button_add_friend_disabled">Đã gởi lời mời kết bạn</string>
+    <string name="button_request_accept">Chấp nhận</string>
+    <string name="button_request_reject">Từ chối</string>
 
     <string name="activity_chat_label">Tin nhắn mới</string>
     <string name="activity_all_users_label">"Khám phá "</string>
     <string name="activity_user_info_label">Thông tin người dùng</string>
 
     <string name="back_again_to_exit">Nhấn QUAY LẠI một lần nữa để thoát ứng dụng</string>
+    <string name="friend_request_notification">lời mời kết bạn mới</string>
+    <string name="empty_friend_list">Danh sách bạn bè trống</string>
+
 
 </resources>
