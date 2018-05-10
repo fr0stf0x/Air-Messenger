@@ -15,18 +15,28 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import it.tdt.edu.vn.airmessenger.AllUsersActivity;
 import it.tdt.edu.vn.airmessenger.ChatActivity;
 import it.tdt.edu.vn.airmessenger.R;
 import it.tdt.edu.vn.airmessenger.UserInfoActivity;
 import it.tdt.edu.vn.airmessenger.adapters.UserAdapter;
+import it.tdt.edu.vn.airmessenger.models.FriendRequest;
 import it.tdt.edu.vn.airmessenger.models.User;
 
 public class UserListFragment extends Fragment implements UserAdapter.OnUserClickListener {
@@ -117,8 +127,7 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserClic
             switch (flag) {
                 case FRIENDS_FLAG:
                     mQuery = db.collection(User.COLLECTION_NAME)
-                            .document(user.getUid())
-                            .collection(COLLECTION_NAME);
+                            .document(user.getUid()).collection(COLLECTION_NAME);
                     Log.d(TAG, "Case friends");
                     break;
                 case USERS_FLAG:

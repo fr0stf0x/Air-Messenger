@@ -1,6 +1,12 @@
 package it.tdt.edu.vn.airmessenger.models;
 
+import android.content.Context;
+
 import com.google.firebase.firestore.IgnoreExtraProperties;
+
+import java.util.HashMap;
+
+import it.tdt.edu.vn.airmessenger.R;
 
 @IgnoreExtraProperties
 public class User {
@@ -91,5 +97,24 @@ public class User {
 
     public void setSex(String sex) {
         this.sex = sex;
+    }
+
+    public static HashMap<String, Object> initUserWithDefaultvalues(Context context) {
+        HashMap<String, Object> userInfo = new HashMap<>();
+        userInfo.put(User.FIELD_NAME, context.getResources()
+                .getString(R.string.default_username));
+        userInfo.put(User.FIELD_EMAIL, context.getResources()
+                .getString(R.string.default_email));
+        userInfo.put(User.FIELD_STATUS, context.getResources()
+                .getString(R.string.default_status));
+        userInfo.put(User.FIELD_AGE, context.getResources()
+                .getInteger(R.integer.default_age));
+        userInfo.put(User.FIELD_SEX, context.getResources()
+                .getString(R.string.sex_unknown));
+        userInfo.put(User.FIELD_THUMB_IMAGE, context.getResources()
+                .getString(R.string.default_thumb_image));
+        userInfo.put(User.FIELD_IMAGE, context.getResources()
+                .getString(R.string.default_image));
+        return userInfo;
     }
 }

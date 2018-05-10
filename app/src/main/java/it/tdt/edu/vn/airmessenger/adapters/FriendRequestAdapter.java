@@ -24,7 +24,7 @@ public class FriendRequestAdapter extends FirestoreAdapter<FriendRequestAdapter.
     public interface FriendRequestHandler {
         void onFriendRequestAcceptedListener(DocumentSnapshot user);
 
-        void onFriendRequestRejectedListener();
+        void onFriendRequestRejectedListener(DocumentSnapshot user);
     }
 
     private FriendRequestHandler mHandler;
@@ -69,20 +69,20 @@ public class FriendRequestAdapter extends FirestoreAdapter<FriendRequestAdapter.
             ButterKnife.bind(this, itemView);
         }
 
-        protected void bind(final DocumentSnapshot requestRef, final FriendRequestHandler handler) {
-            FriendRequest request = requestRef.toObject(FriendRequest.class);
+        protected void bind(final DocumentSnapshot senderSnapshot, final FriendRequestHandler handler) {
+            FriendRequest request = senderSnapshot.toObject(FriendRequest.class);
             tvUser.setText(request.getUserName());
             tvTimeSend.setText(request.getSendTime().toString());
             btnAccept.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    handler.onFriendRequestAcceptedListener(requestRef);
+                    handler.onFriendRequestAcceptedListener(senderSnapshot);
                 }
             });
             btnReject.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    handler.onFriendRequestRejectedListener();
+                    handler.onFriendRequestRejectedListener(senderSnapshot);
                 }
             });
         }

@@ -68,9 +68,10 @@ public class UserAdapter extends FirestoreAdapter<UserAdapter.UserViewHolder> {
             User user = userSnapshot.toObject(User.class);
             if (user == null) {
                 Log.d(TAG, "something wrong");
+                return;
             }
+
             tvUser.setText(user.getName());
-            Log.d(TAG, user.getName());
             tvStatus.setText(user.getStatus());
 
             itemView.setOnClickListener(
@@ -85,4 +86,6 @@ public class UserAdapter extends FirestoreAdapter<UserAdapter.UserViewHolder> {
             );
         }
     }
+
+
 }

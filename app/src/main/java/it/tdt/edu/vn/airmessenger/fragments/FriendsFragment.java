@@ -21,11 +21,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.Locale;
 
@@ -127,6 +129,21 @@ public class FriendsFragment extends Fragment implements FriendRequestAdapter.Fr
                 }
 
                 @Override
+                protected void onDocumentAdded(DocumentChange change) {
+                    boolean thisCanBeShownInAllUserList = true;
+                    // Can not show self in list
+                    if (!change.getDocument().getId().equals(user.getUid())) {
+                        thisCanBeShownInAllUserList = false;
+                    }
+//                    Query query = db.collection(User.COLLECTION_NAME);
+                    // TODO check if user exists in collection
+                    if (thisCanBeShownInAllUserList) {
+                        super.onDocumentAdded(change);
+                    }
+                    //
+                }
+
+                @Override
                 protected void onError(FirebaseFirestoreException e) {
                     Log.d(REQUEST_TAG, "Error occurred");
                 }
@@ -137,34 +154,70 @@ public class FriendsFragment extends Fragment implements FriendRequestAdapter.Fr
         }
     }
 
+    /*
+    Add sender to receiver's friend list
+    Add receiver to sender's friend list
+    Delete the request in receiver's request list
+     */
     @Override
-    public void onFriendRequestAcceptedListener(DocumentSnapshot user) {
+    public void onFriendRequestAcceptedListener(final DocumentSnapshot senderSnapshot) {
 
-        // TODO add friend
-        // Write to friend_database, delete in request_database
-        final DocumentReference thisUserRef = db.collection(User.COLLECTION_NAME)
+        final DocumentReference receiverRef = db.collection(User.COLLECTION_NAME)
                 .document(this.user.getUid());
-        db.collection(User.COLLECTION_NAME).document(user.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        final DocumentReference senderRef = db.collection(User.COLLECTION_NAME)
+                .document(senderSnapshot.getId());
+
+        // Get sender in User Collection
+        senderRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                User user = task.getResult().toObject(User.class);
-//                thisUserRef.collection(UserListFragment.COLLECTION_NAME)
-//                        .document(u).set(user);
-//                String notification = String.format(Locale.getDefault(),
-//                        "%s - ID %s is added to friend list",
-//                        user.get(FriendRequest.FIELD_USER_NAME),
-//                        user.getId());
-//                Log.d(REQUEST_TAG, notification);
-//                Toast.makeText(getContext(), notification, Toast.LENGTH_SHORT).show();
+
+                if (task.isSuccessful()) {
+                    DocumentSnapshot fullSenderInfo = task.getResult();
+                    WriteBatch batch = db.batch();
+
+                    // Add to receiver friend list
+                    batch.set(receiverRef
+                                    .collection(UserListFragment.COLLECTION_NAME)
+                                    .document(),
+                            fullSenderInfo);
+
+                    String notification = String.format(Locale.getDefault(),
+                            "%s - ID %s is added to friend list",
+                            fullSenderInfo.getString(User.FIELD_NAME),
+                            fullSenderInfo.getId());
+                    // Toast log
+                    Toast.makeText(getContext(), notification, Toast.LENGTH_SHORT).show();
+
+                    // Delete request
+                    batch.delete(receiverRef.collection(FriendRequest.COLLECTION_NAME)
+                            .document(fullSenderInfo.getId()));
+
+                    Log.d(REQUEST_TAG, "Request of "
+                            + fullSenderInfo.getString(User.FIELD_NAME) + " is deleted");
+
+                    // Add receiver to sender friend list
+                    batch.set(senderRef.collection(UserListFragment.COLLECTION_NAME)
+                            .document(), receiverRef);
+
+                    batch.commit();
+
+                } else {
+                    Log.d(REQUEST_TAG, "Add friend failed");
+                }
             }
         });
-
-
     }
 
     @Override
-    public void onFriendRequestRejectedListener() {
+    public void onFriendRequestRejectedListener(DocumentSnapshot senderSnapshot) {
         // delete in request
+        final DocumentReference receiverRef = db.collection(User.COLLECTION_NAME)
+                .document(this.user.getUid());
 
+        receiverRef.collection(FriendRequest.COLLECTION_NAME)
+                .document(senderSnapshot.getId()).delete();
+
+        Log.d(REQUEST_TAG, "Request of " + senderSnapshot.getString(User.FIELD_NAME) + " is deleted");
     }
 }

@@ -1,6 +1,7 @@
 package it.tdt.edu.vn.airmessenger;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,9 +12,17 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import it.tdt.edu.vn.airmessenger.fragments.UserListFragment;
 import it.tdt.edu.vn.airmessenger.loaders.Loader;
 import it.tdt.edu.vn.airmessenger.loaders.UserLoader;
 import it.tdt.edu.vn.airmessenger.models.User;
@@ -22,65 +31,71 @@ public class ChatActivity extends AppCompatActivity {
 
     final String TAG = "ChatActivity";
 
+    @BindView(R.id.msgContent)
     EditText msgContent;
+
+    @BindView(R.id.btnSend)
     ImageButton btnSend;
+
+    @BindView(R.id.rvMessages)
     RecyclerView rvMessages;
+
     ActionBar actionBar;
 
-    UserLoader loader;
     FirebaseFirestore db;
-    CollectionReference colRef;
-    User user;
+    User receiveUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+
+        db = FirebaseFirestore.getInstance();
+
         actionBar = getSupportActionBar();
+
         try {
             actionBar.setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) {
             Log.d("ActionBarSetting", e.getMessage());
         }
 
-        db = FirebaseFirestore.getInstance();
-        loader = (UserLoader) Loader.getUserLoader();
-        colRef = db.collection("users");
+        ButterKnife.bind(this);
 
-        msgContent = findViewById(R.id.msgContent);
-        rvMessages = findViewById(R.id.rvMessages);
-        btnSend = findViewById(R.id.btnSend);
         setTitle(actionBar);
-        btnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (user != null) {
-                    Toast.makeText(getApplicationContext(), user.getName() + "", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(ChatActivity.this, "Failed", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+    }
+
+    @OnClick(R.id.btnSend)
+    public void onSendButtonClicked() {
+        if (receiveUser != null) {
+            Toast.makeText(getApplicationContext(), receiveUser.getName() + "", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(ChatActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setTitle(final ActionBar actionBar) {
         Intent intent = getIntent();
-//        if (intent != null) {
-//            String refUserId = intent.getStringExtra(User.FIELD_ID);
-////            refUser = new User(refUserId);
-//            DocumentReference document = colRef.document(refUserId);
-//            loader.load(document).into(refUser);
-//            document.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                @Override
-//                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                    if (task.isSuccessful()) {
-//                        actionBar.setTitle(task.getResult().getString(User.FIELD_NAME));
-//                    }
-//                }
-//            });
-//        } else {
-//            actionBar.setTitle(getResources().getString(R.string.activity_chat_label));
-//        }
+        if (intent != null) {
+            String receiverId = intent.getStringExtra(User.USER_ID_KEY);
+
+            db.collection(User.COLLECTION_NAME).document(receiverId)
+                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot receiveUserSnapshot = task.getResult();
+                        actionBar.setTitle(receiveUserSnapshot.getString(User.FIELD_NAME));
+                        receiveUser = receiveUserSnapshot.toObject(User.class);
+                        Log.d(TAG, "Get receiver info successfully " + receiveUserSnapshot.getString(User.FIELD_NAME));
+                    }
+                }
+            });
+        } else {
+            Log.d(TAG, "No extra, set default label");
+            actionBar.setTitle(getResources().getString(R.string.activity_chat_label));
+        }
     }
 }
 
