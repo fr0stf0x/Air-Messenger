@@ -8,13 +8,14 @@
     <ImageView
         android:id="@+id/ivAvatar"
         style="@style/Circle52dp"
+        android:backgroundTint="@color/colorSecondary"
         android:layout_marginEnd="8dp"
         android:gravity="center"
         android:scaleType="center"
         android:src="@drawable/ic_person_outline_white_24dp" />
 
     <LinearLayout
-        style="@style/NoVerticalPaddingOvalBox52dp"
+        style="@style/SmallPaddingOvalBox52dp"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_gravity="center"

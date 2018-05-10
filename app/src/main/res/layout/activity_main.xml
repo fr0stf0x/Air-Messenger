@@ -15,10 +15,10 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             app:tabGravity="fill"
-            app:tabIndicatorColor="@color/colorTextPrimary"
+            app:tabIndicatorColor="@color/colorSecondary"
             app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/colorTextPrimary"
-            app:tabTextColor="@color/colorTextDisable" />
+            app:tabSelectedTextColor="@color/colorPrimaryText"
+            app:tabTextColor="@color/lightGrey" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewPager"
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:src="@drawable/ic_message_white_24dp"
-        app:backgroundTint="@color/color_fab_message"
+        app:backgroundTint="@color/colorSecondary"
         app:fabSize="normal"
         app:layout_anchor="@id/relativeLayout"
         app:layout_anchorGravity="bottom|right|end" />
@@ -44,10 +44,10 @@
         android:id="@+id/fab_new_contact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
+        android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/ic_person_add_white_24dp"
-        app:backgroundTint="@color/color_fab_contact"
+        app:backgroundTint="@color/colorSecondaryDarkColorSecond"
         app:fabSize="normal"
         app:layout_anchor="@id/relativeLayout"
         app:layout_anchorGravity="bottom|right|end" />

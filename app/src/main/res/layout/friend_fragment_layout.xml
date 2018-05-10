@@ -11,10 +11,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@drawable/oval_any_dp"
-        android:backgroundTint="@color/colorRed"
+        android:backgroundTint="@color/colorSecondary"
         android:padding="8dp"
         android:text="@string/friend_request_notification"
-        android:textColor="@color/colorWhite"
         android:textSize="@dimen/extra_large_text" />
 
     <android.support.v7.widget.RecyclerView

@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -167,46 +168,57 @@ public class FriendsFragment extends Fragment implements FriendRequestAdapter.Fr
         final DocumentReference senderRef = db.collection(User.COLLECTION_NAME)
                 .document(senderSnapshot.getId());
 
+        Toast.makeText(getContext(), senderSnapshot.getId(), Toast.LENGTH_SHORT).show();
+
         // Get sender in User Collection
-        senderRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        senderRef.get()
+                .continueWith(new Continuation<DocumentSnapshot, Object>() {
+                    @Override
+                    public Object then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot fullSenderInfo = task.getResult();
+                            final WriteBatch batch = db.batch();
 
-                if (task.isSuccessful()) {
-                    DocumentSnapshot fullSenderInfo = task.getResult();
-                    WriteBatch batch = db.batch();
+                            // Add to receiver friend list
+                            batch.set(receiverRef
+                                            .collection(UserListFragment.COLLECTION_NAME)
+                                            .document(),
+                                    fullSenderInfo);
 
-                    // Add to receiver friend list
-                    batch.set(receiverRef
-                                    .collection(UserListFragment.COLLECTION_NAME)
-                                    .document(),
-                            fullSenderInfo);
+                            String notification = String.format(Locale.getDefault(),
+                                    "%s - ID %s is added to friend list",
+                                    fullSenderInfo.getString(User.FIELD_NAME),
+                                    fullSenderInfo.getId());
+                            // Toast log
+                            Toast.makeText(getContext(), notification, Toast.LENGTH_SHORT).show();
 
-                    String notification = String.format(Locale.getDefault(),
-                            "%s - ID %s is added to friend list",
-                            fullSenderInfo.getString(User.FIELD_NAME),
-                            fullSenderInfo.getId());
-                    // Toast log
-                    Toast.makeText(getContext(), notification, Toast.LENGTH_SHORT).show();
+                            // Delete request
+                            batch.delete(receiverRef.collection(FriendRequest.COLLECTION_NAME)
+                                    .document(fullSenderInfo.getId()));
 
-                    // Delete request
-                    batch.delete(receiverRef.collection(FriendRequest.COLLECTION_NAME)
-                            .document(fullSenderInfo.getId()));
+                            Log.d(REQUEST_TAG, "Request of "
+                                    + fullSenderInfo.getString(User.FIELD_NAME) + " is deleted");
 
-                    Log.d(REQUEST_TAG, "Request of "
-                            + fullSenderInfo.getString(User.FIELD_NAME) + " is deleted");
+                            receiverRef.get().continueWith(new Continuation<DocumentSnapshot, Object>() {
+                                @Override
+                                public Object then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                                    batch.set(senderRef.collection(UserListFragment.COLLECTION_NAME)
+                                            .document(), task.getResult());
 
-                    // Add receiver to sender friend list
-                    batch.set(senderRef.collection(UserListFragment.COLLECTION_NAME)
-                            .document(), receiverRef);
+                                    batch.commit();
+                                    return null;
+                                }
+                            });
 
-                    batch.commit();
+                            // Add receiver to sender friend list
 
-                } else {
-                    Log.d(REQUEST_TAG, "Add friend failed");
-                }
-            }
-        });
+
+                        } else {
+                            Log.d(REQUEST_TAG, "Add friend failed");
+                        }
+                        return null;
+                    }
+                });
     }
 
     @Override

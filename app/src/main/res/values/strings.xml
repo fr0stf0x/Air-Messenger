@@ -53,5 +53,6 @@
         android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
     <string name="friend_request_notification">new friend requests</string>
     <string name="empty_friend_list">You have no friends :(. Find some friends and chat :)</string>
+    <string name="search_for_friend">Let see how others going</string>
 
 </resources>

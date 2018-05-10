@@ -7,13 +7,13 @@
             android:pivotY="0%"
             android:toDegrees="0" >
             <shape android:shape="rectangle" >
-                <solid android:color="@color/chat_bubble_outgoing" />
+                <solid android:color="@color/lightGrey" />
             </shape>
         </rotate>
     </item>
     <item android:right="16dp">
         <shape android:shape="rectangle" >
-            <solid android:color="@color/chat_bubble_outgoing" />
+            <solid android:color="@color/darkGrey" />
             <corners android:radius="4dp" />
         </shape>
     </item>

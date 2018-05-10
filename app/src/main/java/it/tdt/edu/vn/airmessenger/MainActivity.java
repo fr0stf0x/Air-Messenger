@@ -240,7 +240,8 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_settings:
 //                Toast.makeText(this, "Home Settings Click", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+                Intent intent = new Intent(MainActivity.this, UserInfoActivity.class);
+                intent.putExtra(User.USER_ID_KEY, user.getUid());
                 startActivity(intent);
                 return true;
             default:

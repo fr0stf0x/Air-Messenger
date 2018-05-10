@@ -42,19 +42,13 @@ public class FriendRequestFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (adapter != null) {
-            adapter.startListening();
-            Log.d(TAG, "Adapter started listening");
-        }
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (adapter != null) {
-            adapter.stopListening();
-            Log.d(TAG, "Adapter stopped listening");
-        }
+
     }
 
     @Override
@@ -67,6 +61,19 @@ public class FriendRequestFragment extends Fragment {
             userId = args.getString(User.USER_ID_KEY);
         }
         Log.d(TAG, "Handler set up : " + (handler != null));
+        if (adapter != null) {
+            adapter.startListening();
+            Log.d(TAG, "Adapter started listening");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (adapter != null) {
+            adapter.stopListening();
+            Log.d(TAG, "Adapter stopped listening");
+        }
     }
 
     @Nullable

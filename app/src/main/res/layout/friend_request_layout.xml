@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:background="@drawable/oval_any_dp"
-                android:backgroundTint="@color/colorWhite"
+                android:backgroundTint="@color/colorSecondaryDark"
                 android:text="@string/button_request_accept" />
 
             <Button
@@ -67,7 +67,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignBaseline="@id/btnAccept"
                 android:background="@drawable/oval_any_dp"
-                android:backgroundTint="@color/colorWhite"
+                android:backgroundTint="@color/colorSecondaryLightColorThird"
                 android:text="@string/button_request_reject" />
         </RelativeLayout>
     </LinearLayout>

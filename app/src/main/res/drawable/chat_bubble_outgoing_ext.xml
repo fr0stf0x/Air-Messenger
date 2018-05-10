@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:right="16dp">
         <shape android:shape="rectangle" >
-            <solid android:color="@color/chat_bubble_outgoing" />
+            <solid android:color="@color/grey" />
             <corners android:radius="4dp" />
         </shape>
     </item>
