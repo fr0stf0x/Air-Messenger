@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -50,20 +51,15 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-
         db = FirebaseFirestore.getInstance();
 
-        actionBar = getSupportActionBar();
+        Toolbar toolbar = findViewById(R.id.toolbar);
 
-        try {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) {
-            Log.d("ActionBarSetting", e.getMessage());
-        }
+        setSupportActionBar(toolbar);
 
         ButterKnife.bind(this);
 
-        setTitle(actionBar);
+        setupActionBar();
     }
 
     @OnClick(R.id.btnSend)
@@ -75,7 +71,11 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    private void setTitle(final ActionBar actionBar) {
+    private void setupActionBar() {
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(null);
+
         Intent intent = getIntent();
         if (intent != null) {
             String receiverId = intent.getStringExtra(User.USER_ID_KEY);
@@ -86,7 +86,7 @@ public class ChatActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
                         DocumentSnapshot receiveUserSnapshot = task.getResult();
-                        actionBar.setTitle(receiveUserSnapshot.getString(User.FIELD_NAME));
+//                        actionBar.setTitle(receiveUserSnapshot.getString(User.FIELD_NAME));
                         receiveUser = receiveUserSnapshot.toObject(User.class);
                         Log.d(TAG, "Get receiver info successfully " + receiveUserSnapshot.getString(User.FIELD_NAME));
                     }

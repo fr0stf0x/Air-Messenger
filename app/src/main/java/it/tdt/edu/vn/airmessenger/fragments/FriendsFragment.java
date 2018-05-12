@@ -1,5 +1,6 @@
 package it.tdt.edu.vn.airmessenger.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -70,6 +71,7 @@ public class FriendsFragment extends Fragment implements FriendRequestAdapter.Fr
         db = FirebaseFirestore.getInstance();
     }
 
+
     @Override
     public void onStart() {
         super.onStart();
@@ -129,20 +131,6 @@ public class FriendsFragment extends Fragment implements FriendRequestAdapter.Fr
                     }
                 }
 
-                @Override
-                protected void onDocumentAdded(DocumentChange change) {
-                    boolean thisCanBeShownInAllUserList = true;
-                    // Can not show self in list
-                    if (!change.getDocument().getId().equals(user.getUid())) {
-                        thisCanBeShownInAllUserList = false;
-                    }
-//                    Query query = db.collection(User.COLLECTION_NAME);
-                    // TODO check if user exists in collection
-                    if (thisCanBeShownInAllUserList) {
-                        super.onDocumentAdded(change);
-                    }
-                    //
-                }
 
                 @Override
                 protected void onError(FirebaseFirestoreException e) {
@@ -155,11 +143,12 @@ public class FriendsFragment extends Fragment implements FriendRequestAdapter.Fr
         }
     }
 
+
     /*
-    Add sender to receiver's friend list
-    Add receiver to sender's friend list
-    Delete the request in receiver's request list
-     */
+        Add sender to receiver's friend list
+        Add receiver to sender's friend list
+        Delete the request in receiver's request list
+         */
     @Override
     public void onFriendRequestAcceptedListener(final DocumentSnapshot senderSnapshot) {
 
@@ -179,13 +168,14 @@ public class FriendsFragment extends Fragment implements FriendRequestAdapter.Fr
                             DocumentSnapshot fullSenderInfo = task.getResult();
                             final WriteBatch batch = db.batch();
 
-                            // Add to receiver friend list
-                            batch.set(receiverRef
-                                            .collection(UserListFragment.COLLECTION_NAME)
-                                            .document(),
-                                    fullSenderInfo);
-
-                            String notification = String.format(Locale.getDefault(),
+                            if (fullSenderInfo.toObject(User.class) != null) {
+                                // Add to receiver friend list
+                                batch.set(receiverRef
+                                                .collection(UserListFragment.COLLECTION_NAME)
+                                                .document(fullSenderInfo.getId()),
+                                        fullSenderInfo.toObject(User.class));
+                            }
+                            final String notification = String.format(Locale.getDefault(),
                                     "%s - ID %s is added to friend list",
                                     fullSenderInfo.getString(User.FIELD_NAME),
                                     fullSenderInfo.getId());
@@ -197,16 +187,22 @@ public class FriendsFragment extends Fragment implements FriendRequestAdapter.Fr
                                     .document(fullSenderInfo.getId()));
 
                             Log.d(REQUEST_TAG, "Request of "
-                                    + fullSenderInfo.getString(User.FIELD_NAME) + " is deleted");
+                                    + fullSenderInfo.getString(User.FIELD_NAME) + " will be deleted");
 
-                            receiverRef.get().continueWith(new Continuation<DocumentSnapshot, Object>() {
+                            receiverRef.get().continueWith(new Continuation<DocumentSnapshot, Void>() {
                                 @Override
-                                public Object then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                                    batch.set(senderRef.collection(UserListFragment.COLLECTION_NAME)
-                                            .document(), task.getResult());
-
-                                    batch.commit();
-                                    return null;
+                                public Void then(@NonNull Task<DocumentSnapshot> task) throws Exception {
+                                    // Add receiver to sender's friend list
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot fullReceiverInfo = task.getResult();
+                                        batch.set(senderRef.collection(UserListFragment.COLLECTION_NAME)
+                                                .document(fullReceiverInfo.getId()), fullReceiverInfo.toObject(User.class));
+                                        Toast.makeText(getContext(), String.format(Locale.getDefault(),
+                                                "%s - ID %s is added to friend list",
+                                                fullReceiverInfo.getString(User.FIELD_NAME),
+                                                fullReceiverInfo.getId()), Toast.LENGTH_SHORT).show();
+                                    }
+                                    return batch.commit().getResult();
                                 }
                             });
 

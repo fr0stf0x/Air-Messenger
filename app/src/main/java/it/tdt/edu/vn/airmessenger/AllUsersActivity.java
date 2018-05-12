@@ -37,17 +37,12 @@ public class AllUsersActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
 
-        try {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) {
-            Log.d("ActionBarSetting", e.getMessage());
-        }
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         userListFragment = new UserListFragment();
-
         mQuery = db.collection(User.COLLECTION_NAME);
         user = mAuth.getCurrentUser();
         fragmentManager = getSupportFragmentManager();

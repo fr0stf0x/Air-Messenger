@@ -1,5 +1,6 @@
 package it.tdt.edu.vn.airmessenger.adapters;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 
@@ -25,12 +27,12 @@ public class UserAdapter extends FirestoreAdapter<UserAdapter.UserViewHolder> {
     }
 
     private OnUserClickListener mListener;
-    private int flag;
 
     public UserAdapter(Query query, OnUserClickListener listener, int flag) {
         super(query);
         this.mListener = listener;
     }
+
 
     @NonNull
     @Override
@@ -42,6 +44,9 @@ public class UserAdapter extends FirestoreAdapter<UserAdapter.UserViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, final int position) {
+        if (getSnapshot(position).getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            return;
+        }
         holder.bind(getSnapshot(position), mListener);
     }
 
@@ -64,16 +69,19 @@ public class UserAdapter extends FirestoreAdapter<UserAdapter.UserViewHolder> {
         protected void bind(
                 final DocumentSnapshot userSnapshot,
                 final OnUserClickListener listener) {
-
+            //
             User user = userSnapshot.toObject(User.class);
             if (user == null) {
                 Log.d(TAG, "something wrong");
                 return;
             }
 
+            if (userSnapshot.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                return;
+            }
+
             tvUser.setText(user.getName());
             tvStatus.setText(user.getStatus());
-
             itemView.setOnClickListener(
                     new View.OnClickListener() {
                         @Override

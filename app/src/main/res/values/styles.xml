@@ -1,31 +1,30 @@
 <resources>
 
-    <style name="FirstTheme" parent="Theme.AppCompat.Light">
+    <style name="MainTheme" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="android:buttonStyle">@style/buttonStyleFirstTheme</item>
         <item name="android:textColor">@color/colorPrimaryText</item>
+        <item name="buttonStyle">@style/buttonStyleFirstTheme</item>
         <item name="colorAccent">@color/colorSecondary</item>
         <item name="actionBarStyle">@style/AppBarOverlay</item>
     </style>
 
 
-    <style name="SecondTheme" parent="Theme.AppCompat.Light">
+    <style name="DarkTheme" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/colorPrimaryColorSecond</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkColorSecond</item>
-        <item name="android:buttonStyle">@style/buttonStyleSecondTheme</item>
+        <item name="buttonStyle">@style/buttonStyleSecondTheme</item>
         <item name="android:textColor">@color/colorPrimaryTextColorSecond</item>
         <item name="colorAccent">@color/colorSecondaryColorSecond</item>
         <item name="actionBarStyle">@style/AppBarOverlay</item>
     </style>
 
-    <style name="ThirdTheme" parent="Theme.AppCompat.Light">
+    <style name="NoActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimaryColorThird</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkColorThird</item>
-        <item name="android:buttonStyle">@style/buttonStyleThirdTheme</item>
         <item name="android:textColor">@color/colorPrimaryTextColorThird</item>
+        <item name="buttonStyle">@style/buttonStyleThirdTheme</item>
         <item name="colorAccent">@color/colorSecondaryColorThird</item>
-        <item name="actionBarStyle">@style/AppBarOverlay</item>
     </style>
 
     <style name="buttonStyleFirstTheme">
@@ -34,9 +33,7 @@
         <item name="android:backgroundTint">@color/colorSecondary</item>
         <item name="android:textColor">@color/colorSecondaryText</item>
         <item name="android:padding">8dp</item>
-        <item name="actionBarStyle">@style/AppBarOverlay</item>
     </style>
-
 
 
     <style name="buttonStyleSecondTheme">
@@ -44,6 +41,7 @@
         <item name="android:background">@drawable/outline_button</item>
         <item name="android:backgroundTint">@color/colorSecondaryColorSecond</item>
         <item name="android:textColor">@color/colorSecondaryTextColorSecond</item>
+        <item name="android:padding">8dp</item>
     </style>
 
     <style name="buttonStyleThirdTheme">
@@ -51,6 +49,7 @@
         <item name="android:background">@drawable/outline_button</item>
         <item name="android:backgroundTint">@color/colorSecondaryColorThird</item>
         <item name="android:textColor">@color/colorSecondaryTextColorThird</item>
+        <item name="android:padding">8dp</item>
     </style>
 
     <style name="AppBarOverlay" parent="Widget.AppCompat.Light.ActionBar.Solid">

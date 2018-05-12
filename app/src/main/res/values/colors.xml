@@ -11,23 +11,23 @@
     <color name="error">#B00020</color>
 
     <!--Theme 01-->
-    <color name="colorPrimary">#b3e5fc</color>
-    <color name="colorPrimaryLight">#e6ffff</color>
-    <color name="colorPrimaryDark">#82b3c9</color>
-    <color name="colorSecondary">#4db6ac</color>
-    <color name="colorSecondaryLight">#82e9de</color>
-    <color name="colorSecondaryDark">#00867d</color>
+    <color name="colorPrimary">#69f0ae</color>
+    <color name="colorPrimaryLight">#9fffe0</color>
+    <color name="colorPrimaryDark">#2bbd7e</color>
+    <color name="colorSecondary">#ff9100</color>
+    <color name="colorSecondaryLight">#ffc246</color>
+    <color name="colorSecondaryDark">#c56200</color>
     <color name="colorPrimaryText">#000000</color>
     <color name="colorSecondaryText">#000000</color>
 
     <!--Theme 02-->
-    <color name="colorPrimaryColorSecond">#5c6bc0</color>
-    <color name="colorPrimaryLightColorSecond">#8e99f3</color>
-    <color name="colorPrimaryDarkColorSecond">#26418f</color>
-    <color name="colorSecondaryColorSecond">#d7ccc8</color>
-    <color name="colorSecondaryLightColorSecond">#fffefa</color>
-    <color name="colorSecondaryDarkColorSecond">#a59a96</color>
-    <color name="colorPrimaryTextColorSecond">#000000</color>
+    <color name="colorPrimaryColorSecond">#00695c</color>
+    <color name="colorPrimaryLightColorSecond">#439688</color>
+    <color name="colorPrimaryDarkColorSecond">#003d32</color>
+    <color name="colorSecondaryColorSecond">#d81b60</color>
+    <color name="colorSecondaryLightColorSecond">#ff5c8d</color>
+    <color name="colorSecondaryDarkColorSecond">#a00037</color>
+    <color name="colorPrimaryTextColorSecond">#ffffff</color>
     <color name="colorSecondaryTextColorSecond">#ffffff</color>
 
     <!--Theme 03-->

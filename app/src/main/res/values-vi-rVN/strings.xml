@@ -40,6 +40,8 @@
     <string name="friend_request_notification">lời mời kết bạn mới</string>
     <string name="empty_friend_list">Danh sách bạn bè trống</string>
     <string name="search_for_friend">Thêm bạn thêm vui</string>
+    <string name="default_phone_number">Không có số điện thoại</string>
+    <string name="text_yourself">Bạn</string>
 
 
 </resources>

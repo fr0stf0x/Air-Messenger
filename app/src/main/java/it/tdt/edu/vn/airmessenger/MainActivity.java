@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -27,8 +28,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -60,17 +63,29 @@ public class MainActivity extends AppCompatActivity {
 
     MainPagerAdapter pagerAdapter;
 
+    // for future use
+    DocumentSnapshot userSnapshot;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (mAuth == null) {
+            mAuth = FirebaseAuth.getInstance();
+        }
+        if (db == null) {
+            db = FirebaseFirestore.getInstance();
+        }
+
         ButterKnife.bind(this);
         pagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
         setupFloatingActionButton();
+
+        updateUI();
     }
 
     private void setupFloatingActionButton() {
@@ -84,15 +99,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (mAuth == null) {
-            mAuth = FirebaseAuth.getInstance();
-        }
-        if (db == null) {
-            db = FirebaseFirestore.getInstance();
-        }
-        updateUI();
     }
-
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -131,6 +138,9 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean hasUserSignedIn() {
         user = mAuth.getCurrentUser();
+        if (user.getPhotoUrl() != null) {
+            Log.d("Get_user_info", "Photo URL: " + user.getPhotoUrl().toString());
+        }
         return user != null;
     }
 
@@ -144,54 +154,54 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getUserInfoIfExist() {
-        DocumentReference docRef =
-                db.collection("users").document(user.getUid());
-
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        final String TAG = "Get user info";
+        db.collection("users").document(user.getUid())
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                final String TAG = "db_fetch";
                 if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        // TODO User already exists
-                        Log.d(TAG, "Success! " + document.getId());
+                    userSnapshot = task.getResult();
+                    if (userSnapshot.exists()) {
+                        if (user == null) {
+                            return;
+                        }
+                        Log.d(TAG, userSnapshot.getId() + " is fetched");
+                        String toastMsg = String.format(Locale.getDefault(),
+                                getResources().getString(R.string.sign_old_notification),
+                                user.getDisplayName());
+                        Toast.makeText(MainActivity.this, toastMsg, Toast.LENGTH_SHORT).show();
+                        ActionBar actionBar = getSupportActionBar();
+                        actionBar.setTitle(user.getDisplayName());
                     } else {
                         initUser();
                     }
                 } else {
-                    Log.d(TAG, "Failed! ");
+                    Log.d(TAG, "Error get user info");
                 }
             }
         });
     }
+
 
     /*
     Init UserInfo in Firebase Firestore
      */
     private void initUser() {
         CollectionReference users = db.collection("users");
-        HashMap<String, Object> userInfo = new HashMap<>();
-        userInfo.put(User.FIELD_NAME, user.getDisplayName() == null ?
-                getResources().getString(R.string.default_username) :
-                user.getDisplayName());
-        userInfo.put(User.FIELD_EMAIL, user.getEmail() == null ?
-                getResources().getString(R.string.default_email) :
-                user.getEmail());
-        userInfo.put(User.FIELD_STATUS,
-                getResources().getString(R.string.default_status));
-        userInfo.put(User.FIELD_AGE, getResources().getInteger(R.integer.default_age));
-        userInfo.put(User.FIELD_SEX, getResources().getString(R.string.sex_unknown));
-        userInfo.put(User.FIELD_THUMB_IMAGE,
-                getResources().getString(R.string.default_thumb_image));
-        userInfo.put(User.FIELD_IMAGE,
-                getResources().getString(R.string.default_image));
-        users.document(user.getUid()).set(userInfo);
+        HashMap<String, Object> userInfo = User.initUser(user, this);
+        String toastMsg = String.format(Locale.getDefault(),
+                getResources().getString(R.string.sign_new_notification),
+                user.getDisplayName(),
+                getResources().getString(R.string.app_name));
+
+        Toast.makeText(MainActivity.this, toastMsg, Toast.LENGTH_SHORT).show();
+        users.document(user.getUid()).set(userInfo); // Set REF
     }
 
     private void backToWelcomeScreen() {
         Intent intent = new Intent(this, StartActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 

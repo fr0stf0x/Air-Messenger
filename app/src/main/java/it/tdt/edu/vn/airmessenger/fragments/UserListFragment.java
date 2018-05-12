@@ -12,31 +12,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import it.tdt.edu.vn.airmessenger.AllUsersActivity;
 import it.tdt.edu.vn.airmessenger.ChatActivity;
 import it.tdt.edu.vn.airmessenger.R;
 import it.tdt.edu.vn.airmessenger.UserInfoActivity;
 import it.tdt.edu.vn.airmessenger.adapters.UserAdapter;
-import it.tdt.edu.vn.airmessenger.models.FriendRequest;
 import it.tdt.edu.vn.airmessenger.models.User;
 
 public class UserListFragment extends Fragment implements UserAdapter.OnUserClickListener {
@@ -139,12 +129,14 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserClic
             adapter = new UserAdapter(mQuery, this, flag) {
                 @Override
                 protected void onDataChanged() {
-                    if (getItemCount() == 0) {
-                        rvContacts.setVisibility(View.GONE);
-                        tvEmptyList.setVisibility(View.VISIBLE);
-                    } else {
-                        rvContacts.setVisibility(View.VISIBLE);
-                        tvEmptyList.setVisibility(View.GONE);
+                    if (flag == FRIENDS_FLAG) {
+                        if (getItemCount() == 0) {
+                            rvContacts.setVisibility(View.GONE);
+                            tvEmptyList.setVisibility(View.VISIBLE);
+                        } else {
+                            rvContacts.setVisibility(View.VISIBLE);
+                            tvEmptyList.setVisibility(View.GONE);
+                        }
                     }
                 }
 
