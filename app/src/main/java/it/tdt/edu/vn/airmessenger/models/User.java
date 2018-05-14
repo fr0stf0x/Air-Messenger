@@ -1,14 +1,11 @@
 package it.tdt.edu.vn.airmessenger.models;
 
-import android.content.Context;
-import android.net.Uri;
-
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
 import java.util.HashMap;
 
+import it.tdt.edu.vn.airmessenger.App;
 import it.tdt.edu.vn.airmessenger.R;
 
 @IgnoreExtraProperties
@@ -17,6 +14,7 @@ public class User {
     public static final String COLLECTION_NAME = "users";
     public static final String USER_ID_KEY = "userId";
     public static final String DATA_KEY = "data";
+    public static final String IMAGE_TYPE = ".jpg";
 
     public static final String FIELD_EMAIL = "email";
     public static final String FIELD_NAME = "name";
@@ -103,37 +101,30 @@ public class User {
         this.sex = sex;
     }
 
-    /*
-    Initialize a User-Map object from a FirebaseUser instance
+    /**
+     * Initialize a User-Map object from a {@link FirebaseUser} object
      */
-    public static HashMap<String, Object> initUser(FirebaseUser user, Context context) {
+    public static HashMap<String, Object> initUser(FirebaseUser user) {
         HashMap<String, Object> userInfo = new HashMap<>();
-        // Check name
         String name = (user.getDisplayName().equals("") || user.getDisplayName() == null) ?
-                context.getResources().getString(R.string.default_username) : user.getDisplayName();
-        // Check email
+                App.getContext().getResources().getString(R.string.default_username) : user.getDisplayName();
         String email = (user.getEmail().equals("") || user.getEmail() == null) ?
-                context.getResources().getString(R.string.default_email) : user.getEmail();
-        // Check phonenumber
+                App.getContext().getResources().getString(R.string.default_email) : user.getEmail();
         String phoneNumber = (user.getPhoneNumber() == null || user.getPhoneNumber().equals("")) ?
-                context.getResources().getString(R.string.default_phone_number) : user.getPhoneNumber();
-        // Check user photo exists
+                App.getContext().getResources().getString(R.string.default_phone_number) : user.getPhoneNumber();
         String thumbImage = (user.getPhotoUrl() == null) ?
-                context.getResources().getString(R.string.default_thumb_image) : user.getPhotoUrl().toString();
+                App.getContext().getResources().getString(R.string.default_thumb_image) : user.getPhotoUrl().toString();
         String image = (user.getPhotoUrl() == null) ?
-                context.getResources().getString(R.string.default_image) : user.getPhotoUrl().toString();
-
-
-        String status = context.getResources().getString(R.string.default_status);
+                App.getContext().getResources().getString(R.string.default_image) : user.getPhotoUrl().toString();
+        String status = App.getContext().getResources().getString(R.string.default_status);
+        String sex = App.getContext().getResources().getString(R.string.default_status);
         int age = 0;
-        String sex = context.getResources().getString(R.string.default_status);
 
         userInfo.put(User.FIELD_NAME, name);
         userInfo.put(User.FIELD_EMAIL, email);
         userInfo.put(User.FIELD_STATUS, status);
         userInfo.put(User.FIELD_AGE, age);
-        userInfo.put(User.FIELD_SEX, context.getResources()
-                .getString(R.string.default_sex));
+        userInfo.put(User.FIELD_SEX, sex);
         userInfo.put(User.FIELD_PHONE, phoneNumber);
         userInfo.put(User.FIELD_THUMB_IMAGE, thumbImage);
         userInfo.put(User.FIELD_IMAGE, image);

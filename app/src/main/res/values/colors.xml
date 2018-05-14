@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorAccent">#03a9f4</color>
-
+    <color name="transparent">@android:color/transparent</color>
     <color name="black">#000000</color>
     <color name="grey">#616161</color>
     <color name="darkGrey">#373737</color>
@@ -10,35 +9,24 @@
     <color name="white">#FFFFFF</color>
     <color name="error">#B00020</color>
 
-    <!--Theme 01-->
-    <color name="colorPrimary">#69f0ae</color>
-    <color name="colorPrimaryLight">#9fffe0</color>
-    <color name="colorPrimaryDark">#2bbd7e</color>
-    <color name="colorSecondary">#ff9100</color>
-    <color name="colorSecondaryLight">#ffc246</color>
-    <color name="colorSecondaryDark">#c56200</color>
-    <color name="colorPrimaryText">#000000</color>
-    <color name="colorSecondaryText">#000000</color>
+    <!--Dark theme-->
+    <color name="primaryColor">#283593</color>
+    <color name="primaryLightColor">#5f5fc4</color>
+    <color name="primaryDarkColor">#001064</color>
+    <color name="secondaryColor">#d50000</color>
+    <color name="secondaryLightColor">#ff5131</color>
+    <color name="secondaryDarkColor">#9b0000</color>
+    <color name="primaryTextColor">#ffffff</color>
+    <color name="secondaryTextColor">#ffffff</color>
 
-    <!--Theme 02-->
-    <color name="colorPrimaryColorSecond">#00695c</color>
-    <color name="colorPrimaryLightColorSecond">#439688</color>
-    <color name="colorPrimaryDarkColorSecond">#003d32</color>
-    <color name="colorSecondaryColorSecond">#d81b60</color>
-    <color name="colorSecondaryLightColorSecond">#ff5c8d</color>
-    <color name="colorSecondaryDarkColorSecond">#a00037</color>
-    <color name="colorPrimaryTextColorSecond">#ffffff</color>
-    <color name="colorSecondaryTextColorSecond">#ffffff</color>
-
-    <!--Theme 03-->
-    <color name="colorPrimaryColorThird">#b0bec5</color>
-    <color name="colorPrimaryLightColorThird">#e2f1f8</color>
-    <color name="colorPrimaryDarkColorThird">#808e95</color>
-    <color name="colorSecondaryColorThird">#f48fb1</color>
-    <color name="colorSecondaryLightColorThird">#ffc1e3</color>
-    <color name="colorSecondaryDarkColorThird">#bf5f82</color>
-    <color name="colorPrimaryTextColorThird">#000000</color>
-    <color name="colorSecondaryTextColorThird">#000000</color>
-
+    <!--LightTheme-->
+    <color name="primaryColor.Light">#344955</color>
+    <color name="primaryLightColor.Light">#4a6572</color>
+    <color name="primaryDarkColor.Light">#232f34</color>
+    <color name="secondaryColor.Light">#F9AA33</color>
+    <color name="secondaryLightColor.Light">#56c8d8</color>
+    <color name="secondaryDarkColor.Light">#006978</color>
+    <color name="primaryTextColor.Light">#000000</color>
+    <color name="secondaryTextColor.Light">#000000</color>
 
 </resources>

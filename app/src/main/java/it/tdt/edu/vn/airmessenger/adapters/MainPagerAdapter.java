@@ -5,8 +5,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import it.tdt.edu.vn.airmessenger.App;
+import it.tdt.edu.vn.airmessenger.R;
 import it.tdt.edu.vn.airmessenger.fragments.FriendsFragment;
-import it.tdt.edu.vn.airmessenger.fragments.UserListFragment;
 import it.tdt.edu.vn.airmessenger.fragments.ConversationListFragment;
 
 public class MainPagerAdapter extends FragmentStatePagerAdapter {
@@ -17,7 +18,9 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
             new ConversationListFragment(),
             new FriendsFragment()
     };
-    public static final String[] TITLES = {"CONVERSATIONS", "FRIENDS"};
+
+    public final String[] TITLES = {App.getContext().getString(R.string.tab_conversation_label),
+            App.getContext().getString(R.string.tab_friends_label)};
 
     public MainPagerAdapter(FragmentManager fragmentManager) {
         super(fragmentManager);

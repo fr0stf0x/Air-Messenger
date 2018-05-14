@@ -14,22 +14,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.List;
 
 import it.tdt.edu.vn.airmessenger.AllUsersActivity;
 import it.tdt.edu.vn.airmessenger.ChatActivity;
 import it.tdt.edu.vn.airmessenger.R;
 import it.tdt.edu.vn.airmessenger.UserInfoActivity;
 import it.tdt.edu.vn.airmessenger.adapters.UserAdapter;
+import it.tdt.edu.vn.airmessenger.interfaces.OnUserClickListener;
+import it.tdt.edu.vn.airmessenger.models.Conversation;
 import it.tdt.edu.vn.airmessenger.models.User;
 
-public class UserListFragment extends Fragment implements UserAdapter.OnUserClickListener {
+public class UserListFragment extends Fragment implements OnUserClickListener {
 
     public static String COLLECTION_NAME = "friends";
 
@@ -87,17 +93,49 @@ public class UserListFragment extends Fragment implements UserAdapter.OnUserClic
 
     @Override
     public void onUserClick(DocumentSnapshot user) {
+        String userId = user.getId();
         Intent intent;
         switch (flag) {
             case USERS_FLAG:
                 intent = new Intent(getContext(), UserInfoActivity.class);
+                startIntentWithExtra(intent, userId);
                 break;
-            default:
+            default: // jump to chat activity
                 intent = new Intent(getContext(), ChatActivity.class);
+                putExtrasAndStart(intent, userId);
                 break;
         }
-        intent.putExtra(User.USER_ID_KEY, user.getId());
+    }
+
+    private void startIntentWithExtra(Intent intent, String userId) {
+        intent.putExtra(User.USER_ID_KEY, userId);
         startActivity(intent);
+    }
+
+    private void putExtrasAndStart(final Intent intent, final String receiverId) {
+        db.collection(User.COLLECTION_NAME)
+                .document(this.user.getUid())
+                .collection(Conversation.COLLECTION_NAME)
+                .whereEqualTo(Conversation.FIELD_WITH, receiverId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<DocumentSnapshot> result = task.getResult().getDocuments();
+                            if (result.size() > 1) {
+                                Log.d(TAG, "onComplete: ERROR - More than 1 conversation");
+                                return;
+                            }
+                            if (result.size() == 1) {
+                                String chatId = result.get(0).getString(Conversation.FIELD_WITH);
+                                intent.putExtra(Conversation.CONVERSATION_ID_KEY, chatId);
+                                Log.d(TAG, "onComplete: There 1 conversation: " + chatId);
+                            }
+                            startIntentWithExtra(intent, receiverId);
+                        }
+                    }
+                });
     }
 
     @Nullable

@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="@color/primaryLightColor"
         android:orientation="vertical">
 
         <LinearLayout
@@ -29,20 +29,18 @@
             <TextView
                 android:id="@+id/tvUser"
                 android:layout_width="0dp"
-                android:layout_weight="2"
                 android:layout_height="wrap_content"
+                android:layout_weight="2"
                 android:text="@string/default_username"
-                android:textAppearance="@android:style/TextAppearance.Material.Display2"
                 android:textSize="@dimen/extra_large_text" />
 
             <TextView
                 android:id="@+id/tvTimeSend"
                 android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_vertical|end"
-                android:layout_height="wrap_content"
                 android:text="@string/default_request_send_time"
-                android:textColor="@android:color/darker_gray"
                 android:textSize="@dimen/small_text" />
         </LinearLayout>
 
@@ -57,17 +55,16 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:background="@drawable/oval_any_dp"
-                android:backgroundTint="@color/colorSecondaryDark"
+                android:backgroundTint="@color/primaryColor"
                 android:text="@string/button_request_accept" />
 
             <Button
                 android:id="@+id/btnReject"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:layout_alignBaseline="@id/btnAccept"
+                android:layout_alignParentEnd="true"
                 android:background="@drawable/oval_any_dp"
-                android:backgroundTint="@color/colorSecondaryLightColorThird"
                 android:text="@string/button_request_reject" />
         </RelativeLayout>
     </LinearLayout>

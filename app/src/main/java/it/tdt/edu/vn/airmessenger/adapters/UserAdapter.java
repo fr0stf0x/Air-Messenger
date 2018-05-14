@@ -1,6 +1,6 @@
 package it.tdt.edu.vn.airmessenger.adapters;
 
-import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,20 +11,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import it.tdt.edu.vn.airmessenger.App;
 import it.tdt.edu.vn.airmessenger.R;
+import it.tdt.edu.vn.airmessenger.interfaces.OnUserClickListener;
 import it.tdt.edu.vn.airmessenger.models.User;
 
 public class UserAdapter extends FirestoreAdapter<UserAdapter.UserViewHolder> {
     public static final String TAG = "UserAdapter";
-
-    public interface OnUserClickListener {
-        void onUserClick(DocumentSnapshot user);
-    }
 
     private OnUserClickListener mListener;
 
@@ -75,13 +75,30 @@ public class UserAdapter extends FirestoreAdapter<UserAdapter.UserViewHolder> {
                 Log.d(TAG, "something wrong");
                 return;
             }
-
-            if (userSnapshot.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                return;
+            // TODO Set thumbImage
+            String thumbImage = user.getThumbImage();
+            if (thumbImage != null) {
+                if (!thumbImage.equals(App.getContext().getResources()
+                        .getString(R.string.default_thumb_image))) {
+                    Picasso.get()
+                            .load(thumbImage)
+                            .placeholder(R.drawable.man_icon)
+                            .into(ivAvatar);
+                }
             }
+            tvStatus.setText(user.getStatus());
+
+            /**
+             * if userId equals {@link FirebaseUser#getUid()}
+             * this activity will become account setting activity
+             * {@link #tvUser} and {@link #tvUser} will remain default
+             * and no clickListener attached to {@link #itemView}
+             */
+//            if (userSnapshot.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+//                return;
+//            }
 
             tvUser.setText(user.getName());
-            tvStatus.setText(user.getStatus());
             itemView.setOnClickListener(
                     new View.OnClickListener() {
                         @Override

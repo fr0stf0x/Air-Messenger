@@ -1,6 +1,5 @@
 package it.tdt.edu.vn.airmessenger.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,11 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -144,11 +141,13 @@ public class FriendsFragment extends Fragment implements FriendRequestAdapter.Fr
     }
 
 
-    /*
-        Add sender to receiver's friend list
-        Add receiver to sender's friend list
-        Delete the request in receiver's request list
-         */
+    /**
+     * Add sender to receiver's friend list.
+     * Add receiver to sender's friend list.
+     * Delete the request in receiver's request list.
+     *
+     * @param senderSnapshot sender.
+     */
     @Override
     public void onFriendRequestAcceptedListener(final DocumentSnapshot senderSnapshot) {
 
@@ -217,9 +216,14 @@ public class FriendsFragment extends Fragment implements FriendRequestAdapter.Fr
                 });
     }
 
+    /**
+     * Delete the request in receiver's request list
+     *
+     * @param senderSnapshot
+     */
+
     @Override
     public void onFriendRequestRejectedListener(DocumentSnapshot senderSnapshot) {
-        // delete in request
         final DocumentReference receiverRef = db.collection(User.COLLECTION_NAME)
                 .document(this.user.getUid());
 

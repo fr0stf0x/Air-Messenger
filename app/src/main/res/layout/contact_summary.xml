@@ -1,43 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:orientation="horizontal">
+    android:layout_margin="8dp">
 
-    <ImageView
-        android:id="@+id/ivAvatar"
-        style="@style/Circle52dp"
-        android:backgroundTint="@color/colorSecondary"
-        android:layout_marginEnd="8dp"
-        android:gravity="center"
-        android:scaleType="center"
-        android:src="@drawable/ic_person_outline_white_24dp" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
 
-    <LinearLayout
-        style="@style/SmallPaddingOvalBox52dp"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:backgroundTint="@color/colorPrimary"
-        android:orientation="vertical">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/secondaryColor" />
 
-        <TextView
-            android:id="@+id/tvUser"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="@string/text_yourself"
-            android:textAppearance="@android:style/TextAppearance.Material.Display2"
-            android:textSize="@dimen/large_text" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center"
+            android:layout_toEndOf="@id/ivAvatar">
 
-        <TextView
-            android:id="@+id/tvStatus"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="@string/default_status"
-            android:textColor="@android:color/black" />
-    </LinearLayout>
-</LinearLayout>
+            <TextView
+                android:id="@+id/tvUser"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="@string/text_yourself"
+                android:textSize="@dimen/large_text" />
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tvUser"
+                android:layout_below="@id/tvUser"
+                android:text="@string/default_status"
+                android:textColor="@android:color/black" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

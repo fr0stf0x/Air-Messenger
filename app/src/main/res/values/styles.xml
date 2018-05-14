@@ -1,58 +1,67 @@
 <resources>
 
-    <style name="MainTheme" parent="Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="android:textColor">@color/colorPrimaryText</item>
-        <item name="buttonStyle">@style/buttonStyleFirstTheme</item>
-        <item name="colorAccent">@color/colorSecondary</item>
-        <item name="actionBarStyle">@style/AppBarOverlay</item>
-    </style>
-
-
     <style name="DarkTheme" parent="Theme.AppCompat">
-        <item name="colorPrimary">@color/colorPrimaryColorSecond</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDarkColorSecond</item>
-        <item name="buttonStyle">@style/buttonStyleSecondTheme</item>
-        <item name="android:textColor">@color/colorPrimaryTextColorSecond</item>
-        <item name="colorAccent">@color/colorSecondaryColorSecond</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="buttonStyle">@style/buttonStyleDark</item>
+        <item name="colorAccent">@color/secondaryColor</item>
         <item name="actionBarStyle">@style/AppBarOverlay</item>
+        <item name="android:colorBackground">@color/primaryColor</item>
+        <item name="android:fontFamily">@font/open_sans</item>
     </style>
 
-    <style name="NoActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimaryColorThird</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDarkColorThird</item>
-        <item name="android:textColor">@color/colorPrimaryTextColorThird</item>
-        <item name="buttonStyle">@style/buttonStyleThirdTheme</item>
-        <item name="colorAccent">@color/colorSecondaryColorThird</item>
+
+    <style name="LightTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/primaryColor.Light</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor.Light</item>
+        <item name="buttonStyle">@style/buttonStyleLight</item>
+        <item name="android:textColor">@color/primaryTextColor.Light</item>
+        <item name="colorAccent">@color/secondaryColor.Light</item>
+        <item name="actionBarStyle">@style/AppBarOverlay</item>
+        <item name="android:fontFamily">@font/montserrat</item>
     </style>
 
-    <style name="buttonStyleFirstTheme">
+    <style name="NoActionBarTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primaryColor.Light</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor.Light</item>
+        <item name="android:textColor">@color/primaryTextColor.Light</item>
+        <item name="buttonStyle">@style/buttonStyleLight</item>
+        <item name="colorAccent">@color/secondaryColor.Light</item>
+        <item name="android:fontFamily">@font/open_sans</item>
+    </style>
+
+    <style name="NoActionBarTheme.Dark" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="buttonStyle">@style/buttonStyleDark</item>
+        <item name="colorAccent">@color/secondaryColor</item>
+        <item name="android:colorBackground">@color/primaryColor</item>
+        <item name="android:fontFamily">@font/open_sans</item>
+    </style>
+
+    <style name="buttonStyleDark" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:fontFamily">@font/coiny</item>
+        <item name="android:textAlignment">center</item>
         <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">center</item>
         <item name="android:background">@drawable/outline_button</item>
-        <item name="android:backgroundTint">@color/colorSecondary</item>
-        <item name="android:textColor">@color/colorSecondaryText</item>
+        <item name="android:backgroundTint">@color/secondaryColor</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
         <item name="android:padding">8dp</item>
     </style>
 
-
-    <style name="buttonStyleSecondTheme">
-        <item name="android:textAllCaps">true</item>
-        <item name="android:background">@drawable/outline_button</item>
-        <item name="android:backgroundTint">@color/colorSecondaryColorSecond</item>
-        <item name="android:textColor">@color/colorSecondaryTextColorSecond</item>
-        <item name="android:padding">8dp</item>
+    <style name="buttonStyleLight" parent="buttonStyleDark">
+        <item name="android:backgroundTint">@color/secondaryColor.Light</item>
+        <item name="android:textColor">@color/primaryTextColor.Light</item>
     </style>
 
-    <style name="buttonStyleThirdTheme">
-        <item name="android:textAllCaps">true</item>
-        <item name="android:background">@drawable/outline_button</item>
-        <item name="android:backgroundTint">@color/colorSecondaryColorThird</item>
-        <item name="android:textColor">@color/colorSecondaryTextColorThird</item>
-        <item name="android:padding">8dp</item>
+    <style name="AppBarOverlay" parent="Widget.AppCompat.ActionBar.Solid">
+        <item name="elevation">0dp</item>
     </style>
 
-    <style name="AppBarOverlay" parent="Widget.AppCompat.Light.ActionBar.Solid">
+    <style name="AppBarOverlay.Light" parent="Widget.AppCompat.Light.ActionBar.Solid">
         <item name="elevation">0dp</item>
     </style>
 
@@ -70,6 +79,18 @@
         <item name="android:paddingEnd">16dp</item>
         <item name="android:paddingTop">4dp</item>
         <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="Circle36dp">
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_width">36dp</item>
+        <item name="android:background">@drawable/circle_shape</item>
+    </style>
+
+    <style name="Circle48dp">
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:background">@drawable/circle_shape_48dp</item>
     </style>
 
     <style name="Circle52dp">

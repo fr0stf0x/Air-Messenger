@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -59,6 +61,12 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.fab_new_message)
     FloatingActionButton fabNewMessage;
 
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+
+    @BindView(R.id.relativeLayout)
+    RelativeLayout relativeLayout;
+
     boolean doubleBackToExitPressedOnce = false;
 
     MainPagerAdapter pagerAdapter;
@@ -83,9 +91,8 @@ public class MainActivity extends AppCompatActivity {
         pagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
-        setupFloatingActionButton();
-
         updateUI();
+
     }
 
     private void setupFloatingActionButton() {
@@ -138,9 +145,6 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean hasUserSignedIn() {
         user = mAuth.getCurrentUser();
-        if (user.getPhotoUrl() != null) {
-            Log.d("Get_user_info", "Photo URL: " + user.getPhotoUrl().toString());
-        }
         return user != null;
     }
 
@@ -161,10 +165,7 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     userSnapshot = task.getResult();
-                    if (userSnapshot.exists()) {
-                        if (user == null) {
-                            return;
-                        }
+                    if (userSnapshot.exists() && hasUserSignedIn()) {
                         Log.d(TAG, userSnapshot.getId() + " is fetched");
                         String toastMsg = String.format(Locale.getDefault(),
                                 getResources().getString(R.string.sign_old_notification),
@@ -175,6 +176,8 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         initUser();
                     }
+                    hideProgressBar();
+                    setupFloatingActionButton();
                 } else {
                     Log.d(TAG, "Error get user info");
                 }
@@ -182,13 +185,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.GONE);
+        relativeLayout.setVisibility(View.VISIBLE);
+    }
     /*
     Init UserInfo in Firebase Firestore
      */
     private void initUser() {
         CollectionReference users = db.collection("users");
-        HashMap<String, Object> userInfo = User.initUser(user, this);
+        HashMap<String, Object> userInfo = User.initUser(user);
         String toastMsg = String.format(Locale.getDefault(),
                 getResources().getString(R.string.sign_new_notification),
                 user.getDisplayName(),
@@ -220,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                 .signOut(this)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(MainActivity.this, "You've successfully logged out", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, getResources().getString(R.string.log_out_successfully), Toast.LENGTH_SHORT).show();
                         updateUI();
                     }
                 });

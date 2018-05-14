@@ -8,8 +8,12 @@
         send and receive your messages PRIVATELY and INSTANTLY
     </string>
 
-    <string name="sign_new_notification">Hi %1$s, enjoy your time in %2$s</string>
+    <string name="tab_conversation_label">CONVERSATION</string>
+    <string name="tab_friends_label">FRIENDS</string>
 
+    <string name="log_out_successfully">Successfully logged out</string>
+
+    <string name="sign_new_notification">Hi %1$s, enjoy your time in %2$s</string>
     <string name="sign_old_notification">Welcome back, %1$s</string>
 
     <!--Activity label-->
@@ -56,9 +60,10 @@
 
     <string name="appbar_scrolling_view_behavior" translatable="false">
         android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
-    <string name="friend_request_notification">new friend requests</string>
+    <string name="friend_request_notification">New friend requests</string>
     <string name="empty_friend_list">You have no friends :(. Find some friends and chat :)</string>
     <string name="search_for_friend">Let see how others going</string>
     <string name="text_yourself">You</string>
+    <string name="activity_crop_image_title">Crop image</string>
 
 </resources>

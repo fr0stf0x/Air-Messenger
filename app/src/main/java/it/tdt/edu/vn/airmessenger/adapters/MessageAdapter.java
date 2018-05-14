@@ -1,28 +1,38 @@
 package it.tdt.edu.vn.airmessenger.adapters;
 
-import android.R;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
+import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import it.tdt.edu.vn.airmessenger.App;
+import it.tdt.edu.vn.airmessenger.R;
+import it.tdt.edu.vn.airmessenger.interfaces.OnMessageClickListener;
+import it.tdt.edu.vn.airmessenger.models.Conversation;
 import it.tdt.edu.vn.airmessenger.models.Message;
 
 public class MessageAdapter extends FirestoreAdapter<MessageAdapter.MessageViewHolder> {
+    public static final String TAG = "MessageAdapter";
+    OnMessageClickListener mListener;
 
-    public interface OnMessageLongClickListener {
-        void onMessageLongClicked(DocumentSnapshot msg);
-    }
-
-    OnMessageLongClickListener mListener;
-
-    public MessageAdapter(Query query, OnMessageLongClickListener listener) {
+    public MessageAdapter(Query query, OnMessageClickListener listener) {
         super(query);
         this.mListener = listener;
     }
@@ -31,23 +41,44 @@ public class MessageAdapter extends FirestoreAdapter<MessageAdapter.MessageViewH
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        // TODO
-        return null;
+        View view = inflater.inflate(R.layout.message_sent_layout, parent, false);
+        return new MessageViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-
+        holder.bind(getSnapshot(position), mListener);
     }
 
-    @Override
-    public int getItemCount() {
-        return 0;
-    }
+    static class MessageViewHolder extends RecyclerView.ViewHolder {
 
-    class MessageViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.ivAvatar)
+        ImageView ivAvatar;
+
+        @BindView(R.id.msgContent)
+        TextView msgContent;
+
+        @BindView(R.id.tvTimeSend)
+        TextView tvTimeSend;
+
         public MessageViewHolder(View itemView) {
             super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+
+        protected void bind(final DocumentSnapshot messageSnapshot, final OnMessageClickListener listener) {
+            Message msg = messageSnapshot.toObject(Message.class);
+            if (msg == null) return;
+            msgContent.setText(msg.getContent());
+            SimpleDateFormat dt = new SimpleDateFormat("EEE, d MMM yyyy HH:mm", Locale.getDefault());
+            String date = dt.format(msg.getTime());
+            tvTimeSend.setText(date);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onMessageClicked(messageSnapshot);
+                }
+            });
         }
     }
 }

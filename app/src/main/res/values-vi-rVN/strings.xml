@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_welcome">Chào mừng bạn đến với ứng dụng Air Messeng</string>
+    <string name="app_welcome">Chào mừng bạn đến với
+        Air Messenger</string>
 
     <string name="app_function">
-        Gởi và nhận tin nhắn miễn phí nhanh chóng và bảo mật
+        Gởi, nhận tin nhắn miễn phí nhanh chóng và bảo mật
         với Air Messenger
     </string>
+
+    <string name="tab_conversation_label">CUỘC HỘI THOẠI</string>
+    <string name="tab_friends_label">BẠN BÈ</string>
+
+    <string name="log_out_successfully">Đăng xuất thành công</string>
+
+    <string name="sign_new_notification">Chào %1$s, chúc vui với %2$s</string>
+    <string name="sign_old_notification">Chào mừng bạn quay trở lại, %1$s</string>
+
 
     <string name="action_log_out" translatable="true">Đăng xuất</string>
     <string name="action_settings" translatable="true">Cài đặt</string>
@@ -23,7 +33,7 @@
     <string name="default_sex">Giới tính không xác định</string>
     <string name="default_age">Tuổi không xác định</string>
 
-    <string name="compose_hint">Soạn tin nhắn (&#8230;)</string>
+    <string name="compose_hint">Soạn tin nhắn &#8230;</string>
 
     <string name="button_start">Bắt đầu</string>
     <string name="button_send">Gởi</string>
@@ -33,15 +43,18 @@
     <string name="button_request_reject">Từ chối</string>
 
     <string name="activity_chat_label">Tin nhắn mới</string>
-    <string name="activity_all_users_label">"Khám phá "</string>
+    <string name="activity_all_users_label">Khám phá</string>
     <string name="activity_user_info_label">Thông tin người dùng</string>
 
     <string name="back_again_to_exit">Nhấn QUAY LẠI một lần nữa để thoát ứng dụng</string>
-    <string name="friend_request_notification">lời mời kết bạn mới</string>
+    <string name="friend_request_notification">Lời mời kết bạn mới</string>
     <string name="empty_friend_list">Danh sách bạn bè trống</string>
     <string name="search_for_friend">Thêm bạn thêm vui</string>
     <string name="default_phone_number">Không có số điện thoại</string>
     <string name="text_yourself">Bạn</string>
+    <string name="activity_crop_image_title">Cắt ảnh</string>
+
+
 
 
 </resources>

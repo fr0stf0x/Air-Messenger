@@ -4,36 +4,35 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @IgnoreExtraProperties
 public class Conversation {
 
     public static final String COLLECTION_NAME = "chats";
+    public static final String CONVERSATION_ID_KEY = "conversationId";
 
-    public static final String FIELD_FIRST_USER = "firstUser";
-    public static final String FIELD_SECOND_USER = "secondUser";
-    public static final String FIELD_MESSAGE = "messageList";
-    public static final String FIELD_PHOTO = "photo";
+    public static final String FIELD_FIRST_USER = "firstUserId";
+    public static final String FIELD_SECOND_USER = "secondUserId";
+    public static final String FIELD_MESSAGE = "messages";
+    public static final String FIELD_PHOTO = "chatPhoto";
     public static final String FIELD_LAST_MSG_TIME = "lastMsgTime";
-    public static final String FIELD_IS_READ = "isRead";
+    public static final String FIELD_WITH = "with";
 
-    private String firstUser;
-    private String secondUser;
+    private String firstUserId;
+    private String secondUserId;
     private String chatPhoto;
-
     private @ServerTimestamp
     Date lastMsgTime;
-
-    private List<Message> messageList;
-    private boolean isRead;
+    private List<Message> messages;
 
     public Conversation() {
     }
 
     public Conversation(String firstUser, String secondUser) {
-        this.firstUser = firstUser;
-        this.secondUser = secondUser;
+        this.firstUserId = firstUser;
+        this.secondUserId = secondUser;
     }
 
     public String getChatPhoto() {
@@ -48,31 +47,40 @@ public class Conversation {
         this.lastMsgTime = lastMsgTime;
     }
 
-    public void setRead(boolean read) {
-        isRead = read;
+    public String getFirstUserId() {
+        return firstUserId;
     }
 
-    public String getFirstUser() {
-        return firstUser;
+    public void setFirstUserId(String firstUserId) {
+        this.firstUserId = firstUserId;
     }
 
-    public void setFirstUser(String firstUser) {
-        this.firstUser = firstUser;
+    public String getSecondUserId() {
+        return secondUserId;
     }
 
-    public String getSecondUser() {
-        return secondUser;
+    public void setSecondUserId(String secondUserId) {
+        this.secondUserId = secondUserId;
     }
 
-    public void setSecondUser(String secondUser) {
-        this.secondUser = secondUser;
+    public List<Message> getMessages() {
+        return messages;
     }
 
-    public List<Message> getMessageList() {
-        return messageList;
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
     }
 
-    public void setMessageList(List<Message> messageList) {
-        this.messageList = messageList;
+    public static HashMap<String, Object> initConversation(String firstUserId, String secondUserId) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put(FIELD_FIRST_USER, firstUserId);
+        result.put(FIELD_SECOND_USER, secondUserId);
+        return result;
+    }
+
+    public static HashMap<String, Object> initConversation(String secondUserId) {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put(FIELD_WITH, secondUserId);
+        return result;
     }
 }

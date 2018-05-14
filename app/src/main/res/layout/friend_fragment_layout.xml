@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@drawable/oval_any_dp"
-        android:backgroundTint="@color/colorSecondary"
+        android:backgroundTint="@color/secondaryColor"
         android:padding="8dp"
         android:text="@string/friend_request_notification"
         android:textSize="@dimen/extra_large_text" />

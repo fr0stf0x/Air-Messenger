@@ -65,8 +65,6 @@ public class MessageLoader extends Loader {
         });
     }
 
-    // TODO edit here
-
     @Override
     public void into(Object object) {
 

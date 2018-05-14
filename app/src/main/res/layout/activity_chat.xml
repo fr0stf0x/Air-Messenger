@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,85 +8,71 @@
     android:orientation="vertical"
     tools:context=".ChatActivity">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="@style/AppBarOverlay"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        android:visibility="visible">
 
-        <RelativeLayout
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/tvUsername"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/extra_large_text"
-                android:text="Hello" />
 
-            <TextView
-                android:id="@+id/tvOnlineStatus"
-                android:layout_below="@id/tvUsername"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Online" />
+            <include
+                android:id="@+id/toolbar"
+                layout="@layout/chat_top_bar" />
+        </android.support.design.widget.AppBarLayout>
 
-        </RelativeLayout>
-    </android.support.v7.widget.Toolbar>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvMessages"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="8dp"
-        android:layout_weight="1"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:background="@android:color/transparent"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <EditText
-            android:id="@+id/msgContent"
-            style="@style/OvalBox52dp"
-            android:layout_width="0dp"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvMessages"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/colorSecondary"
-            android:hint="@string/compose_hint"
-            android:inputType="textCapSentences|textMultiLine"
-            android:maxLength="2000"
-            android:maxLines="5"
-            android:scrollHorizontally="false"
-            android:textColor="@color/colorSecondaryText"
-            android:textSize="@dimen/medium_text" />
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <ImageButton
-            android:id="@+id/btnSend"
-            style="@style/Circle52dp"
-            android:layout_gravity="bottom"
-            android:layout_marginStart="8dp"
-            android:contentDescription="@string/button_send"
-            android:scaleType="center"
-            android:src="@drawable/ic_send_white_24dp" />
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-    </LinearLayout>
-</android.support.constraint.ConstraintLayout>
+            <EditText
+                android:id="@+id/msgContent"
+                style="@style/OvalBox52dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/white"
+                android:hint="@string/compose_hint"
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLength="2000"
+                android:maxLines="5"
+                android:scrollHorizontally="false"
+                android:textSize="@dimen/medium_text" />
+
+            <ImageButton
+                android:id="@+id/btnSend"
+                style="@style/Circle52dp"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="@color/primaryLightColor"
+                android:contentDescription="@string/button_send"
+                android:scaleType="center"
+                android:src="@drawable/ic_send_white_24dp" />
+
+        </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
+</android.support.design.widget.CoordinatorLayout>
