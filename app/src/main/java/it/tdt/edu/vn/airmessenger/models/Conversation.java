@@ -6,6 +6,7 @@ import com.google.firebase.firestore.ServerTimestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @IgnoreExtraProperties
 public class Conversation {
@@ -15,24 +16,17 @@ public class Conversation {
 
     public static final String FIELD_FIRST_USER = "firstUserId";
     public static final String FIELD_SECOND_USER = "secondUserId";
-    public static final String FIELD_MESSAGE = "messages";
     public static final String FIELD_PHOTO = "chatPhoto";
-    public static final String FIELD_LAST_MSG_TIME = "lastMsgTime";
-    public static final String FIELD_WITH = "with";
+    public static final String FIELD_MESSAGES = "messages";
+    public static final String FIELD_LAST_MESSAGE = "lastMessage";
 
     private String firstUserId;
     private String secondUserId;
     private String chatPhoto;
-    private @ServerTimestamp
-    Date lastMsgTime;
-    private List<Message> messages;
+    private Map<String, Object> lastMessage;
 
     public Conversation() {
-    }
 
-    public Conversation(String firstUser, String secondUser) {
-        this.firstUserId = firstUser;
-        this.secondUserId = secondUser;
     }
 
     public String getChatPhoto() {
@@ -41,10 +35,6 @@ public class Conversation {
 
     public void setChatPhoto(String chatPhoto) {
         this.chatPhoto = chatPhoto;
-    }
-
-    public void setLastMsgTime(Date lastMsgTime) {
-        this.lastMsgTime = lastMsgTime;
     }
 
     public String getFirstUserId() {
@@ -63,24 +53,21 @@ public class Conversation {
         this.secondUserId = secondUserId;
     }
 
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
-    }
-
-    public static HashMap<String, Object> initConversation(String firstUserId, String secondUserId) {
-        HashMap<String, Object> result = new HashMap<>();
+    public static Map<String, Object> initCentralConversation(String firstUserId,
+                                                              String secondUserId,
+                                                              Map<String, Object> lastMessageMap) {
+        Map<String, Object> result = new HashMap<>();
         result.put(FIELD_FIRST_USER, firstUserId);
         result.put(FIELD_SECOND_USER, secondUserId);
+        result.put(FIELD_LAST_MESSAGE, lastMessageMap);
         return result;
     }
 
-    public static HashMap<String, Object> initConversation(String secondUserId) {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put(FIELD_WITH, secondUserId);
+    public static Map<String, Object> initUserConversation(String secondUserId, String lastSenderName, String chatPhoto, Map<String, Object> lastMessageMap) {
+        Map<String, Object> result = new HashMap<>();
+        result.put(User.FIELD_CHAT_WITH, secondUserId);
+        result.put(FIELD_PHOTO, chatPhoto);
+        result.put(FIELD_LAST_MESSAGE, lastMessageMap);
         return result;
     }
 }

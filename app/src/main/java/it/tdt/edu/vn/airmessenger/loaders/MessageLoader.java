@@ -11,7 +11,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-import it.tdt.edu.vn.airmessenger.adapters.MessageAdapter;
 import it.tdt.edu.vn.airmessenger.models.Message;
 
 public class MessageLoader extends Loader {
@@ -45,15 +44,12 @@ public class MessageLoader extends Loader {
                     QuerySnapshot collection = task.getResult();
                     if (!collection.isEmpty()) {
                         for (DocumentSnapshot doc : collection) {
-                            String sendUser = doc.getString(Message.FIELD_SEND_USER);
-                            String receiveUser = doc.getString(Message.FIELD_RECEIVE_USER);
+                            String sendUser = doc.getString(Message.FIELD_SENDER_ID);
+                            String receiveUser = doc.getString(Message.FIELD_RECEIVER_ID);
                             String content = doc.getString(Message.FIELD_CONTENT);
                             String time = doc.getString(Message.FIELD_TIME);
-
                             result.add(null);
                         }
-//                        MessageAdapter adapter = new MessageAdapter(result);
-//                        recyclerView.setAdapter(adapter);
                         Log.d(TAG, result.size() + " messages fetched");
                     } else {
                         Log.d(TAG, "Empty collection");

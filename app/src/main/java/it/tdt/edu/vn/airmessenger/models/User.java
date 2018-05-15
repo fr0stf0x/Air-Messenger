@@ -24,6 +24,7 @@ public class User {
     public static final String FIELD_THUMB_IMAGE = "thumbImage";
     public static final String FIELD_SEX = "sex";
     public static final String FIELD_AGE = "age";
+    public static final String FIELD_CHAT_WITH = "with";
 
     private String name;
     private String image;

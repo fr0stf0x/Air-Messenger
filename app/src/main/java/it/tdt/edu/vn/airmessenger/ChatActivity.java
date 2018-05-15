@@ -27,10 +27,10 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import it.tdt.edu.vn.airmessenger.adapters.MessageAdapter;
 import it.tdt.edu.vn.airmessenger.interfaces.OnMessageClickListener;
 import it.tdt.edu.vn.airmessenger.models.Conversation;
@@ -75,12 +75,18 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
     TextView tvOnlineStatus;
 
     ActionBar actionBar;
+    User senderUser;
     User receiveUser;
     FirebaseFirestore db;
+    FirebaseUser firebaseSender;
 
     String chatId;
+    String senderPhoto = "";
+    String receiverPhoto = "";
     String senderId;
+    String senderName;
     String receiverId;
+    String receiverName;
 
     Query mQuery;
     MessageAdapter adapter;
@@ -90,34 +96,58 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        ButterKnife.bind(this);
-        initCore();
         getIntentData();
-        setSupportActionBar(toolbar);
-        updateUI();
+        initCore();
+        setupUI();
     }
 
     private void initCore() {
-        FirebaseUser firebaseSender = FirebaseHelper.getCurrentUser();
+        firebaseSender = FirebaseHelper.getCurrentUser();
         db = FirebaseHelper.getFirestore();
         senderId = firebaseSender.getUid();
+        senderName = firebaseSender.getDisplayName();
+        db.collection(User.COLLECTION_NAME)
+                .document(senderId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            senderUser = task.getResult().toObject(User.class);
+                            if (senderUser.getThumbImage() != null) {
+                                senderPhoto = senderUser.getThumbImage();
+                            }
+                        }
+                    }
+                });
     }
 
-    private void updateUI() {
-        if (!receiverExists()) {
-            actionBar.setTitle(getResources().getString(R.string.activity_chat_label));
-        } else {
-            setupActionBar();
-            if (conversationExists()) {
-                getMessages();
-            }
+    private void setupUI() {
+        ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(null);
+
+        if (receiverExists()) {
+            setupChatTopBar();
         }
+        if (conversationExists()) {
+            getMessages();
+        }
+
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onSendButtonClicked();
             }
         });
+    }
+
+    private void updateUI() {
+        setupChatTopBar();
+        getMessages();
     }
 
     private void getIntentData() {
@@ -134,13 +164,13 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
 
     private void getMessages() {
         mQuery = db.collection(Conversation.COLLECTION_NAME)
-                .document(chatId).collection(Conversation.FIELD_MESSAGE);
+                .document(chatId).collection(Conversation.FIELD_MESSAGES)
+                .orderBy(Message.FIELD_TIME, Query.Direction.ASCENDING);
         adapter = new MessageAdapter(mQuery, this);
         rvMessages.setAdapter(adapter);
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
         adapter.startListening();
     }
-
 
     public void onSendButtonClicked() {
         String message = getMessageContent();
@@ -149,59 +179,81 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
         if (conversationExists()) {
             sendNewMessage(message);
         } else {
-            initChat(message);
+            initConversation(message);
         }
     }
 
-    private void sendNewMessage(String newMessage) {
-        DocumentReference chatRef = db.collection(Conversation.COLLECTION_NAME)
+    private void sendNewMessage(String messageContent) {
+
+        DocumentReference senderChatRef = db.collection(User.COLLECTION_NAME)
+                .document(senderId)
+                .collection(Conversation.COLLECTION_NAME)
                 .document(chatId);
-        DocumentReference newMessageRef = chatRef
-                .collection(Conversation.FIELD_MESSAGE)
+        DocumentReference receiverChatRef = db.collection(User.COLLECTION_NAME)
+                .document(receiverId)
+                .collection(Conversation.COLLECTION_NAME)
+                .document(chatId);
+        DocumentReference newMessageRef = db.collection(Conversation.COLLECTION_NAME)
+                .document(chatId)
+                .collection(Conversation.FIELD_MESSAGES)
                 .document();
-        HashMap<String, Object> messageMap = Message.initMessage(senderId, receiverId, newMessage);
-        WriteBatch batch = db.batch();
-        batch.set(newMessageRef, messageMap);
-        HashMap<String, Object> updates = new HashMap<>();
-        updates.put(Conversation.FIELD_LAST_MSG_TIME, messageMap.get(Message.FIELD_TIME));
-        batch.update(chatRef, updates);
-        batch.commit()
+
+        Map<String, Object> messageMap = Message.initMessageMap(senderId, senderName,
+                receiverId, receiverName, messageContent);
+
+        db.batch()
+                .set(newMessageRef, messageMap)
+                .update(senderChatRef, messageMap)
+                .update(receiverChatRef, messageMap)
+                .commit()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Log.d(TAG, "onComplete: Message sent");
+                            Log.d(TAG, "onComplete: New message sent");
                         } else {
-                            Log.d(TAG, "onComplete: Message is not sent");
+                            Log.d(TAG, "onComplete: New message is not sent");
                         }
                     }
                 });
     }
 
-    private void initChat(String firstMessage) {
-        WriteBatch batch = db.batch();
+    private void initConversation(String firstMessage) {
         DocumentReference chatRef = db.collection(Conversation.COLLECTION_NAME).document();
+        DocumentReference messageRef = chatRef.collection(Conversation.FIELD_MESSAGES).document();
         chatId = chatRef.getId();
 
-        DocumentReference messageRef = chatRef.collection(Conversation.FIELD_MESSAGE).document();
+        Map<String, Object> messageMap = Message.initMessageMap(
+                senderId,
+                senderName,
+                receiverId,
+                receiverName,
+                firstMessage);
 
-        HashMap<String, Object> newChat = Conversation.initConversation(senderId, receiverId);
-        HashMap<String, Object> messageMap = Message.initMessage(senderId, receiverId, firstMessage);
-        newChat.put(Conversation.FIELD_LAST_MSG_TIME, messageMap.get(Message.FIELD_TIME));
+        Map<String, Object> centralConversation = Conversation.initCentralConversation(
+                senderId, receiverId, messageMap);
+        Map<String, Object> senderConversation = Conversation.initUserConversation(receiverId,
+                firebaseSender.getDisplayName(), receiverPhoto, messageMap);
+        Map<String, Object> receiverConversation = Conversation.initUserConversation(senderId,
+                firebaseSender.getDisplayName(), senderPhoto, messageMap);
 
-        batch.set(chatRef, newChat);
-        batch.set(messageRef, messageMap);
-        batch.set(createChatDocumentReference(chatId, senderId, receiverId), Conversation.initConversation(receiverId));
-        batch.set(createChatDocumentReference(chatId, receiverId, senderId), Conversation.initConversation(senderId));
-
-        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+        db.batch()
+                .set(chatRef, centralConversation)
+                .set(messageRef, messageMap)
+                .set(createChatDocumentReference(chatId, senderId, receiverId), senderConversation)
+                .set(createChatDocumentReference(chatId, receiverId, senderId), receiverConversation)
+                .commit().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    Log.d(TAG, "onComplete: Operation completed");
+                    Log.d(TAG, "onComplete: Initialization completed");
+                    updateUI();
+                } else {
+                    Log.d(TAG, "onComplete: Initialization failed");
                 }
             }
         });
+
     }
 
     private DocumentReference createChatDocumentReference(String documentId, String firstUserId, String secondUserId) {
@@ -214,11 +266,7 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
         return receiverId != null && !receiverId.equals("");
     }
 
-    private void setupActionBar() {
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(null);
-
+    private void setupChatTopBar() {
         db.collection(User.COLLECTION_NAME).document(receiverId)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -227,7 +275,11 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
                     DocumentSnapshot receiveUserSnapshot = task.getResult();
                     receiveUser = receiveUserSnapshot.toObject(User.class);
                     if (receiveUser != null) {
-                        tvUserName.setText(receiveUser.getName());
+                        if (receiveUser.getThumbImage() != null) {
+                            receiverPhoto = receiveUser.getThumbImage();
+                        }
+                        receiverName = receiveUser.getName();
+                        tvUserName.setText(receiverName);
                     }
                 }
             }

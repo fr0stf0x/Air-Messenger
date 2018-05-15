@@ -116,7 +116,7 @@ public class UserListFragment extends Fragment implements OnUserClickListener {
         db.collection(User.COLLECTION_NAME)
                 .document(this.user.getUid())
                 .collection(Conversation.COLLECTION_NAME)
-                .whereEqualTo(Conversation.FIELD_WITH, receiverId)
+                .whereEqualTo(User.FIELD_CHAT_WITH, receiverId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -128,7 +128,7 @@ public class UserListFragment extends Fragment implements OnUserClickListener {
                                 return;
                             }
                             if (result.size() == 1) {
-                                String chatId = result.get(0).getString(Conversation.FIELD_WITH);
+                                String chatId = result.get(0).getId();
                                 intent.putExtra(Conversation.CONVERSATION_ID_KEY, chatId);
                                 Log.d(TAG, "onComplete: There 1 conversation: " + chatId);
                             }
