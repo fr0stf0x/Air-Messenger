@@ -14,7 +14,7 @@
         android:src="@drawable/ic_person_outline_white_24dp" />
 
     <LinearLayout
-        style="@style/OvalBox52dp"
+        style="@style/OvalBox48dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"

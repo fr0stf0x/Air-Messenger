@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/chat_bg_2"
-    android:orientation="vertical"
     tools:context=".ChatActivity">
 
     <ProgressBar
@@ -15,13 +14,14 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
-    <android.support.constraint.ConstraintLayout
+    <RelativeLayout
         android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="visible">
 
         <android.support.design.widget.AppBarLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -34,26 +34,33 @@
             android:id="@+id/rvMessages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:layout_above="@id/linearLayout"
+            android:layout_below="@id/appBarLayout" />
 
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_margin="8dp"
             android:background="@android:color/transparent"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnIcon"
+                style="@style/Circle48dp"
+                android:backgroundTint="@color/primaryLightColor"
+                android:contentDescription="Emoticon"
+                android:scaleType="center"
+                android:src="@drawable/baseline_insert_emoticon_white_24" />
 
             <EditText
                 android:id="@+id/msgContent"
-                style="@style/OvalBox52dp"
+                style="@style/OvalBox48dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/white"
                 android:hint="@string/compose_hint"
@@ -65,14 +72,11 @@
 
             <ImageButton
                 android:id="@+id/btnSend"
-                style="@style/Circle52dp"
-                android:layout_gravity="bottom"
-                android:layout_marginStart="8dp"
+                style="@style/Circle48dp"
                 android:backgroundTint="@color/primaryLightColor"
                 android:contentDescription="@string/button_send"
                 android:scaleType="center"
                 android:src="@drawable/ic_send_white_24dp" />
-
         </LinearLayout>
-    </android.support.constraint.ConstraintLayout>
+    </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

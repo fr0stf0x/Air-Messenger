@@ -65,15 +65,15 @@
         <item name="elevation">0dp</item>
     </style>
 
-    <style name="OvalBox52dp">
+    <style name="OvalBox48dp">
         <item name="android:background">@drawable/chat_bottom_bar</item>
         <item name="android:paddingStart">24dp</item>
         <item name="android:paddingEnd">24dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
     </style>
 
-    <style name="SmallPaddingOvalBox52dp">
+    <style name="SmallPaddingOvalBox48dp">
         <item name="android:background">@drawable/chat_bottom_bar</item>
         <item name="android:paddingStart">16dp</item>
         <item name="android:paddingEnd">16dp</item>
@@ -90,13 +90,13 @@
     <style name="Circle48dp">
         <item name="android:layout_height">48dp</item>
         <item name="android:layout_width">48dp</item>
-        <item name="android:background">@drawable/circle_shape_48dp</item>
+        <item name="android:background">@drawable/circle_shape</item>
     </style>
 
     <style name="Circle52dp">
         <item name="android:layout_height">52dp</item>
         <item name="android:layout_width">52dp</item>
-        <item name="android:background">@drawable/circle_shape_52dp</item>
+        <item name="android:background">@drawable/circle_shape</item>
     </style>
 
 </resources>

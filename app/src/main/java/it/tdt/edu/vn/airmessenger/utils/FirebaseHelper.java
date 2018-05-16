@@ -7,7 +7,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,8 +52,8 @@ public class FirebaseHelper {
                 .child(getCurrentUser().getUid())
                 .child(User.DATA_KEY)
                 .child(User.FIELD_IMAGE + User.IMAGE_TYPE);
-        imageRef
-                .putFile(imageFileUri)
+
+        imageRef.putFile(imageFileUri)
                 .continueWith(new Continuation<UploadTask.TaskSnapshot, Uri>() {
                     // Get downloadUri from Firebase Storage
                     @Override
@@ -69,18 +72,18 @@ public class FirebaseHelper {
                     public UserProfileChangeRequest then(@NonNull Task<Uri> task)
                             throws FirebaseException {
                         if (task.isSuccessful()) {
-                            Uri downloadUri = task.getResult();
+                            Uri imgDownUrl = task.getResult();
                             Log.d(TAG, "then: create UpdateRequest completed");
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest
                                     .Builder()
-                                    .setPhotoUri(downloadUri)
+                                    .setPhotoUri(imgDownUrl)
                                     .build();
                             return profileUpdates;
                         }
                         return null;
                     }
-                }).continueWith(
-                new Continuation<UserProfileChangeRequest, Void>() {
+                })
+                .continueWith(new Continuation<UserProfileChangeRequest, Void>() {
                     // Operate UpdateRequest
                     @Override
                     public Void then(@NonNull Task<UserProfileChangeRequest> task)
@@ -94,7 +97,7 @@ public class FirebaseHelper {
                                         @Override
                                         public Void then(@NonNull Task<Void> task) throws Exception {
                                             if (task.isSuccessful()) {
-                                                Log.d(TAG, "then: " + profileUpdates.getPhotoUri().toString());
+                                                Log.d(TAG, "then: Success, now upload thumb");
                                                 setThumbImage(imageFileUri);
                                             }
                                             return null;
@@ -108,65 +111,75 @@ public class FirebaseHelper {
 
     public static void setThumbImage(final Uri imageUri) {
         final String TAG = "Set_thumb_image";
-        StorageReference imageRef = getStorage().child(getCurrentUser().getUid())
+
+        StorageReference thumbRef = getStorage().child(getCurrentUser().getUid())
                 .child(User.DATA_KEY).child(User.FIELD_THUMB_IMAGE + User.IMAGE_TYPE);
-        final Map<String, Object> firestoreUpdate = new HashMap<>();
+
         File thumb_file = new File(imageUri.getPath());
-        Bitmap thumb_image = null;
+        Bitmap thumbnailBitmap = null;
         Log.d(TAG, "setThumbImage: init");
 
         try {
-            thumb_image = new Compressor(App.getContext())
+            thumbnailBitmap = new Compressor(App.getContext())
                     .setMaxHeight(200)
                     .setMaxWidth(200)
                     .setQuality(75)
                     .compressToBitmap(thumb_file);
             Log.d(TAG, "setThumbImage: compress image successfully");
-            if (thumb_image == null) {
+            if (thumbnailBitmap == null) {
                 Log.d(TAG, "setThumbImage: FAILED");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        if (thumb_image != null) {
+        if (thumbnailBitmap != null) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             Log.d(TAG, "setThumbImage: ByteArray created");
-            thumb_image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            thumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             byte[] data = outputStream.toByteArray();
-            imageRef.putBytes(data)
-                    .continueWith(new Continuation<UploadTask.TaskSnapshot, Task<Void>>() {
+
+            thumbRef.putBytes(data)
+                    .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                         @Override
-                        public Task<Void> then(@NonNull Task<UploadTask.TaskSnapshot> task)
-                                throws FirebaseException {
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                             if (task.isSuccessful()) {
                                 UploadTask.TaskSnapshot taskSnapshot = task.getResult();
-                                Log.d(TAG, "then: Update DB successfully");
-                                firestoreUpdate.put(User.FIELD_IMAGE, imageUri.toString());
-                                firestoreUpdate.put(User.FIELD_THUMB_IMAGE,
-                                        taskSnapshot.getDownloadUrl().toString());
-                                return getFirestore().collection(User.COLLECTION_NAME)
-                                        .document(getCurrentUser().getUid()).update(firestoreUpdate);
-                            } else {
-                                Log.d(TAG, "then: Error updating DB");
-                            }
-                            return null;
-                        }
-                    }).addOnCompleteListener(
-                    new OnCompleteListener<Task<Void>>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Task<Void>> task) {
-                            task.getResult().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(App.getContext(), "Operation completed", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Log.d(TAG, "onComplete: Error happen");
-                                    }
-                                }
-                            });
+                                Uri thumbDownUrl = taskSnapshot.getDownloadUrl();
+                                Map<String, Object> updates = new HashMap<>();
+                                if (thumbDownUrl != null) {
+                                    Log.d(TAG, "then: ThumbDownURL: " + thumbDownUrl.toString());
+                                    updates.put(User.FIELD_THUMB_IMAGE,
+                                            thumbDownUrl.toString());
+                                    updates.put(User.FIELD_IMAGE, imageUri.toString());
 
+                                    getFirestore().collection(User.COLLECTION_NAME)
+                                            .document(getCurrentUser().getUid())
+                                            .update(updates)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Log.d(TAG, "onSuccess: Update completed");
+                                                    } else {
+                                                        Log.d(TAG, "onComplete: Update failed");
+                                                    }
+                                                }
+                                            })
+                                            .addOnCanceledListener(new OnCanceledListener() {
+                                                @Override
+                                                public void onCanceled() {
+                                                    Log.d(TAG, "onCanceled: Update canceled");
+                                                }
+                                            });
+                                }
+                                else {
+                                    Log.d(TAG, "onComplete: Error getting thumb image download url");
+                                }
+                            }
+                            else {
+                                Log.d(TAG, "onComplete: Error uploading thumb image to FirebaseStorage");
+                            }
                         }
                     });
         }

@@ -1,41 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:autoMirrored="true"
     android:id="@+id/layout"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/ivAvatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="8dp"
-        android:backgroundTint="@color/primaryLightColor"
-        android:src="@drawable/ic_person_outline_white_24dp" />
-
-    <RelativeLayout
-        android:id="@+id/bubble"
+    <TextView
+        android:id="@+id/tvTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/ivAvatar"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_toStartOf="@id/ivAvatar">
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/oval_any_dp"
+        android:backgroundTint="@color/secondaryLightColor"
+        android:paddingBottom="4dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="4dp"
+        android:text="@string/default_time_today"
+        android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/msgContent"
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/tvTime">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivAvatar"
+            style="@style/Circle48dp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/man_icon" />
+
+        <RelativeLayout
+            android:id="@+id/bubble"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true" />
+            android:layout_margin="8dp"
+            android:layout_toStartOf="@id/ivAvatar"
+            android:background="@drawable/send_bubble"
+            android:paddingBottom="4dp"
+            android:paddingEnd="12dp"
+            android:paddingStart="12dp"
+            android:paddingTop="4dp">
 
-        <TextView
-            android:id="@+id/tvTimeSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/msgContent" />
+            <TextView
+                android:id="@+id/msgContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/compose_hint"
+                android:textColor="@color/white"
+                android:textSize="@dimen/large_text" />
+
+            <TextView
+                android:id="@+id/tvTimeSend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/msgContent"
+                android:text="@string/default_time_today"
+                android:textColor="@color/lightGrey" />
+        </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>

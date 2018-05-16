@@ -19,7 +19,6 @@
         android:top="0dp" />
 
     <size
-        android:width="270dp"
-        android:height="52dp" />
+        android:height="48dp" />
 
 </shape>

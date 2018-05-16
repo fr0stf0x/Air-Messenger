@@ -53,6 +53,7 @@
     <string name="default_sex">Not defined sexual</string>
     <string name="default_age">Not defined age</string>
     <string name="default_phone_number">Not defined number</string>
+    <string name="default_time_today">TODAY</string>
 
     <!--Message compose hint-->
     <string name="compose_hint">Your message ...</string>

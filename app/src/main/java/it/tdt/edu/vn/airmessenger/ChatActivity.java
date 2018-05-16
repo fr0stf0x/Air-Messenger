@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,11 +16,13 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -48,7 +51,7 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
     final String TAG = "ChatActivity";
 
     @BindView(R.id.layout)
-    ConstraintLayout layout;
+    RelativeLayout layout;
 
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
@@ -166,8 +169,17 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
         mQuery = db.collection(Conversation.COLLECTION_NAME)
                 .document(chatId).collection(Conversation.FIELD_MESSAGES)
                 .orderBy(Message.FIELD_TIME, Query.Direction.ASCENDING);
-        adapter = new MessageAdapter(mQuery, this);
+        adapter = new MessageAdapter(mQuery, this) {
+            @Override
+            protected void onDocumentAdded(DocumentChange change) {
+                super.onDocumentAdded(change);
+                rvMessages.smoothScrollToPosition(change.getNewIndex());
+            }
+        };
+        adapter.setSenderPhoto(senderPhoto);
+        adapter.setReceiverPhoto(receiverPhoto);
         rvMessages.setAdapter(adapter);
+
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
         adapter.startListening();
     }

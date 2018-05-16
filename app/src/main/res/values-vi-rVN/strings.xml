@@ -32,6 +32,7 @@
     <string name="default_status">Xin chào. Tôi đang sử dụng Air Messenger</string>
     <string name="default_sex">Giới tính không xác định</string>
     <string name="default_age">Tuổi không xác định</string>
+    <string name="default_time_today">HÔM NAY</string>
 
     <string name="compose_hint">Soạn tin nhắn &#8230;</string>
 

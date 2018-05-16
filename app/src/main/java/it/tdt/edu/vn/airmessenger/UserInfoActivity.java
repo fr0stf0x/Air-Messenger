@@ -177,6 +177,7 @@ public class UserInfoActivity extends AppCompatActivity {
                                         CropImage.activity()
                                                 .setActivityTitle(getResources().getString(R.string.activity_crop_image_title))
                                                 .setCropShape(CropImageView.CropShape.OVAL)
+                                                .setAspectRatio(1, 1)
                                                 .setGuidelines(CropImageView.Guidelines.ON)
                                                 .start(UserInfoActivity.this);
                                     }

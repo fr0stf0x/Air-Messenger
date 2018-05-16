@@ -80,7 +80,7 @@
 
         <Button
             android:id="@+id/btn_add_friend"
-            style="@style/OvalBox52dp"
+            style="@style/OvalBox48dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
