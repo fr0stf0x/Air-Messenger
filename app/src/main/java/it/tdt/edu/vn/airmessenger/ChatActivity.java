@@ -26,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -136,7 +137,7 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(null);
 
-        if (dataLegal()) {
+        if (receiverExists()) {
             updateUI();
         }
 
@@ -163,9 +164,11 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
                             receiverPhoto = receiveUser.getThumbImage();
                             putImage(receiverPhoto, ivAvatar);
                         }
-                        receiverName = receiveUser.getName();
                         tvUserName.setText(receiverName);
-                        getMessages();
+                        receiverName = receiveUser.getName();
+                        if (conversationExists()) {
+                            getMessages();
+                        }
                     }
                 }
             }
@@ -233,10 +236,13 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
         Map<String, Object> messageMap = Message.initMessageMap(senderId, senderName,
                 receiverId, receiverName, messageContent);
 
+        Map<String, Object> lastMessageUpdate = new HashMap<>();
+        lastMessageUpdate.put(Conversation.FIELD_LAST_MESSAGE, messageMap);
+
         db.batch()
                 .set(newMessageRef, messageMap)
-                .update(senderChatRef, messageMap)
-                .update(receiverChatRef, messageMap)
+                .update(senderChatRef, lastMessageUpdate)
+                .update(receiverChatRef, lastMessageUpdate)
                 .commit()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override

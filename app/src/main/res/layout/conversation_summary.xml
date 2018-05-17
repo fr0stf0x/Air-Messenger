@@ -26,7 +26,7 @@
             android:layout_toEndOf="@id/ivChatPhoto">
 
             <TextView
-                android:id="@+id/tvUser"
+                android:id="@+id/tvChatName"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
@@ -37,7 +37,7 @@
                 android:id="@+id/tvLastMsgTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/tvUser"
+                android:layout_alignBaseline="@id/tvChatName"
                 android:layout_alignParentEnd="true"
                 android:text="Last message time" />
 
@@ -45,7 +45,7 @@
                 android:id="@+id/tvSummary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tvUser"
+                android:layout_below="@id/tvChatName"
                 android:text="Summary" />
         </RelativeLayout>
     </RelativeLayout>

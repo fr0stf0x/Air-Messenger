@@ -61,8 +61,8 @@ public class ConversationAdapter extends FirestoreAdapter<ConversationAdapter.Co
         @BindView(R.id.ivChatPhoto)
         ImageView ivChatPhoto;
 
-        @BindView(R.id.tvUser)
-        TextView tvUser;
+        @BindView(R.id.tvChatName)
+        TextView tvChatName;
 
         @BindView(R.id.tvLastMsgTime)
         TextView tvLastMsgTime;
@@ -83,16 +83,15 @@ public class ConversationAdapter extends FirestoreAdapter<ConversationAdapter.Co
             String chatPhoto = conversationSnapshot.getString(Conversation.FIELD_CHAT_PHOTO);
             Map<String, Object> lastMessage = (Map<String, Object>) conversationSnapshot.get(Conversation.FIELD_LAST_MESSAGE);
 
+            Date lastMsgTime = (Date) lastMessage.get(Message.FIELD_TIME);
+            SimpleDateFormat dt = new SimpleDateFormat("d MMM ''yy HH:mm", Locale.getDefault());
 
             if (chatPhoto != null && !chatPhoto.equals("")) {
                 Picasso.get()
                         .load(chatPhoto)
                         .into(ivChatPhoto);
             }
-
-            Date lastMsgTime = (Date) lastMessage.get(Message.FIELD_TIME);
-            SimpleDateFormat dt = new SimpleDateFormat("d MMM ''yy HH:mm", Locale.getDefault());
-
+            tvChatName.setText(conversationSnapshot.getString(Conversation.FIELD_CONVERSATION_NAME));
             tvLastMsgTime.setText(dt.format(lastMsgTime));
             tvSummary.setText((String) lastMessage.get(Message.FIELD_CONTENT));
 
@@ -102,39 +101,6 @@ public class ConversationAdapter extends FirestoreAdapter<ConversationAdapter.Co
                     listener.onConversationClicked(conversationSnapshot);
                 }
             });
-
-
-            FirebaseHelper.getFirestore().collection(User.COLLECTION_NAME)
-                    .document(receiverId)
-                    .get()
-                    .continueWith(new Continuation<DocumentSnapshot, Void>() {
-                        @Override
-                        public Void then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                            if (task.isSuccessful()) {
-                                String userName = task.getResult().getString(User.FIELD_NAME);
-                                tvUser.setText(userName);
-
-                                FirebaseHelper.getFirestore()
-                                        .collection(Conversation.COLLECTION_NAME)
-                                        .document(chatId)
-                                        .collection(Conversation.FIELD_MESSAGES)
-                                        .orderBy(Message.FIELD_TIME, Query.Direction.DESCENDING)
-                                        .limit(1)
-                                        .get()
-                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    DocumentSnapshot lastMessage = task.getResult().getDocuments().get(0);
-
-
-                                                }
-                                            }
-                                        });
-                            }
-                            return null;
-                        }
-                    });
 
         }
     }

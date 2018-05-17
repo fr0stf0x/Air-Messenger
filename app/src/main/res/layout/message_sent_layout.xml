@@ -37,7 +37,7 @@
             android:id="@+id/bubble"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_toStartOf="@id/ivAvatar"
             android:background="@drawable/send_bubble"
             android:paddingBottom="4dp"

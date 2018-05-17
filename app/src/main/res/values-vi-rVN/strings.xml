@@ -54,8 +54,8 @@
     <string name="default_phone_number">Không có số điện thoại</string>
     <string name="text_yourself">Bạn</string>
     <string name="activity_crop_image_title">Cắt ảnh</string>
-
-
+    <string name="tooltip_fab_new_message">Gởi tin nhắn mới</string>
+    <string name="tooltip_fab_new_friend">Thêm bạn</string>
 
 
 </resources>

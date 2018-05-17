@@ -66,5 +66,7 @@
     <string name="search_for_friend">Let see how others going</string>
     <string name="text_yourself">You</string>
     <string name="activity_crop_image_title">Crop image</string>
+    <string name="tooltip_fab_new_message">Send a new message</string>
+    <string name="tooltip_fab_new_friend">Add a new friend</string>
 
 </resources>

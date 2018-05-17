@@ -44,9 +44,6 @@ public class UserAdapter extends FirestoreAdapter<UserAdapter.UserViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, final int position) {
-        if (getSnapshot(position).getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-            return;
-        }
         holder.bind(getSnapshot(position), mListener);
     }
 
@@ -70,21 +67,21 @@ public class UserAdapter extends FirestoreAdapter<UserAdapter.UserViewHolder> {
                 final DocumentSnapshot userSnapshot,
                 final OnUserClickListener listener) {
             //
+
             User user = userSnapshot.toObject(User.class);
             if (user == null) {
                 Log.d(TAG, "something wrong");
                 return;
             }
+            Log.d(TAG, "bind: Binding user " + user.getName());
             // TODO Set thumbImage
             String thumbImage = user.getThumbImage();
             if (thumbImage != null) {
-                if (!thumbImage.equals(App.getContext().getResources()
-                        .getString(R.string.default_thumb_image))) {
-                    Picasso.get()
-                            .load(thumbImage)
-                            .placeholder(R.drawable.man_icon)
-                            .into(ivAvatar);
-                }
+                Log.d(TAG, "bind: Thumb image " + thumbImage);
+                Picasso.get()
+                        .load(thumbImage)
+                        .placeholder(R.drawable.man_icon)
+                        .into(ivAvatar);
             }
             tvStatus.setText(user.getStatus());
 
