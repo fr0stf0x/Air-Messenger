@@ -43,31 +43,22 @@ import it.tdt.edu.vn.airmessenger.models.Message;
 import it.tdt.edu.vn.airmessenger.utils.FirebaseHelper;
 
 public class MessageAdapter extends FirestoreAdapter<MessageAdapter.MessageViewHolder> {
+    public static final String TAG = "MessageAdapter";
 
     public static final int TYPE_SEND = 0;
     public static final int TYPE_NEWDAY_SEND = 10;
     public static final int TYPE_RECEIVE = 1;
     public static final int TYPE_NEWDAY_RECEIVE = 11;
-    public static final int TYPE_DATE_FALSE = 0;
-    public static final int TYPE_DATE_TRUE = 1;
 
-    public static final String TAG = "MessageAdapter";
     private OnMessageClickListener mListener;
     private String senderPhoto;
     private String receiverPhoto;
     private TextView tvTime;
-    private CircleImageView senderAvatar, receiverAvatar;
 
-    public MessageAdapter(Query query, OnMessageClickListener listener) {
+    public MessageAdapter(Query query, String senderPhoto, String receiverPhoto, OnMessageClickListener listener) {
         super(query);
         this.mListener = listener;
-    }
-
-    public void setSenderPhoto(String senderPhoto) {
         this.senderPhoto = senderPhoto;
-    }
-
-    public void setReceiverPhoto(String receiverPhoto) {
         this.receiverPhoto = receiverPhoto;
     }
 
@@ -75,7 +66,7 @@ public class MessageAdapter extends FirestoreAdapter<MessageAdapter.MessageViewH
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = null;
+        View view;
 
         switch (viewType) {
             case TYPE_RECEIVE:
@@ -128,12 +119,15 @@ public class MessageAdapter extends FirestoreAdapter<MessageAdapter.MessageViewH
                 isNewDay = false;
             }
         }
+
         if (FirebaseHelper.getCurrentUser().getUid().equals(receiverId)) {
+            // Receive case
             if (isNewDay) {
                 return TYPE_NEWDAY_RECEIVE;
             }
             return TYPE_RECEIVE;
         }
+        // Send case
         if (isNewDay) {
             return TYPE_NEWDAY_SEND;
         }
@@ -166,6 +160,7 @@ public class MessageAdapter extends FirestoreAdapter<MessageAdapter.MessageViewH
             if (msg == null) {
                 return;
             }
+
             if (photoUrl != null && !photoUrl.equals("")) {
                 Picasso.get()
                         .load(photoUrl)

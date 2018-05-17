@@ -11,14 +11,15 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -74,12 +75,35 @@ public class ConversationAdapter extends FirestoreAdapter<ConversationAdapter.Co
             ButterKnife.bind(this, itemView);
         }
 
-        private void bind(final DocumentSnapshot chatSnapshot,
+        private void bind(final DocumentSnapshot conversationSnapshot,
                           final OnChatSelectedListener listener) {
-
-            final String chatId = chatSnapshot.getId();
             final String TAG = "Conversation bind";
-            String receiverId = chatSnapshot.getString(User.FIELD_CHAT_WITH);
+            final String chatId = conversationSnapshot.getId();
+            String receiverId = conversationSnapshot.getString(User.FIELD_CHAT_WITH);
+            String chatPhoto = conversationSnapshot.getString(Conversation.FIELD_CHAT_PHOTO);
+            Map<String, Object> lastMessage = (Map<String, Object>) conversationSnapshot.get(Conversation.FIELD_LAST_MESSAGE);
+
+
+            if (chatPhoto != null && !chatPhoto.equals("")) {
+                Picasso.get()
+                        .load(chatPhoto)
+                        .into(ivChatPhoto);
+            }
+
+            Date lastMsgTime = (Date) lastMessage.get(Message.FIELD_TIME);
+            SimpleDateFormat dt = new SimpleDateFormat("d MMM ''yy HH:mm", Locale.getDefault());
+
+            tvLastMsgTime.setText(dt.format(lastMsgTime));
+            tvSummary.setText((String) lastMessage.get(Message.FIELD_CONTENT));
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onConversationClicked(conversationSnapshot);
+                }
+            });
+
+
             FirebaseHelper.getFirestore().collection(User.COLLECTION_NAME)
                     .document(receiverId)
                     .get()
@@ -103,18 +127,7 @@ public class ConversationAdapter extends FirestoreAdapter<ConversationAdapter.Co
                                                 if (task.isSuccessful()) {
                                                     DocumentSnapshot lastMessage = task.getResult().getDocuments().get(0);
 
-                                                    Date lastMsgTime = (Date) lastMessage.get(Message.FIELD_TIME);
-                                                    SimpleDateFormat dt = new SimpleDateFormat("d MMM ''yy HH:mm", Locale.getDefault());
 
-                                                    tvLastMsgTime.setText(dt.format(lastMsgTime));
-                                                    tvSummary.setText(lastMessage.getString(Message.FIELD_CONTENT));
-
-                                                    itemView.setOnClickListener(new View.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(View v) {
-                                                            listener.onConversationClicked(chatSnapshot);
-                                                        }
-                                                    });
                                                 }
                                             }
                                         });

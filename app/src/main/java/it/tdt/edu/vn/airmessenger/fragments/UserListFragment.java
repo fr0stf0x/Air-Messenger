@@ -186,8 +186,8 @@ public class UserListFragment extends Fragment implements OnUserClickListener {
                 }
             };
 
-            rvContacts.setLayoutManager(new LinearLayoutManager(getContext()));
             rvContacts.setAdapter(adapter);
+            rvContacts.setLayoutManager(new LinearLayoutManager(getContext()));
         }
     }
 
