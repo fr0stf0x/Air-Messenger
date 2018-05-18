@@ -189,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
         relativeLayout.setVisibility(View.VISIBLE);
     }
+
     /*
     Init UserInfo in Firebase Firestore
      */

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,6 +26,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.WriteBatch;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -33,11 +36,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.tdt.edu.vn.airmessenger.adapters.MessageAdapter;
+import it.tdt.edu.vn.airmessenger.interfaces.MessageClickListener;
+import it.tdt.edu.vn.airmessenger.interfaces.MessageTouchListener;
 import it.tdt.edu.vn.airmessenger.interfaces.OnMessageClickListener;
 import it.tdt.edu.vn.airmessenger.models.Conversation;
 import it.tdt.edu.vn.airmessenger.models.Message;
 import it.tdt.edu.vn.airmessenger.models.User;
 import it.tdt.edu.vn.airmessenger.utils.FirebaseHelper;
+import it.tdt.edu.vn.airmessenger.utils.MessageActionModeCallBack;
 
 /**
  * There are two ways to access this activity
@@ -54,7 +60,7 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
 
-    @BindView(R.id.msgContent)
+    @BindView(R.id.edtMessage)
     EditText msgContent;
 
     @BindView(R.id.btnSend)
@@ -82,8 +88,8 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
     FirebaseUser firebaseSender;
 
     String chatId;
-    String senderPhoto = "";
-    String receiverPhoto = "";
+    String senderPhoto;
+    String receiverPhoto;
     String senderId;
     String senderName;
     String receiverId;
@@ -91,6 +97,7 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
 
     Query mQuery;
     MessageAdapter adapter;
+    private ActionMode mActionMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,10 +106,6 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
 
         getIntentData();
         initCore();
-    }
-
-    private boolean dataLegal() {
-        return receiverExists() && conversationExists();
     }
 
     private void initCore() {
@@ -200,11 +203,131 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
                 super.onDocumentAdded(change);
                 rvMessages.smoothScrollToPosition(change.getNewIndex());
             }
+
+            @Override
+            protected void onDocumentRemoved(final DocumentChange change) {
+                super.onDocumentRemoved(change);
+                db.collection(Conversation.COLLECTION_NAME)
+                        .document(chatId)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    Map<String, Object> msgToDeleteMap =
+                                            (Map<String, Object>) task
+                                                    .getResult()
+                                                    .get(Conversation.FIELD_LAST_MESSAGE);
+
+                                    String msgToDeleteId = (String) msgToDeleteMap
+                                            .get(Message.FIELD_MESSAGE_ID);
+                                    if (msgToDeleteId.equals(change.getDocument().getId())) {
+                                        Log.d(TAG, "onComplete: " +
+                                                "deleting last message, need to update");
+
+                                        DocumentReference centralRef = db
+                                                .collection(Conversation.COLLECTION_NAME)
+                                                .document(chatId);
+                                        DocumentReference senderRef = db
+                                                .collection(User.COLLECTION_NAME)
+                                                .document(senderId)
+                                                .collection(Conversation.COLLECTION_NAME)
+                                                .document(chatId);
+                                        DocumentReference receiverRef = db
+                                                .collection(User.COLLECTION_NAME)
+                                                .document(receiverId)
+                                                .collection(Conversation.COLLECTION_NAME)
+                                                .document(chatId);
+
+                                        if (change.getOldIndex() == 0) {
+                                            return;
+                                        }
+                                        Message newLastMessage = adapter
+                                                .getSnapshot((change.getOldIndex() - 1))
+                                                .toObject(Message.class);
+
+                                        if (newLastMessage != null) {
+                                            Map<String, Object> newLastMsgMap = Message
+                                                    .initMessageMap(newLastMessage);
+
+                                            Map<String, Object> update = new HashMap<>();
+                                            update.put(Conversation.FIELD_LAST_MESSAGE, newLastMsgMap);
+
+
+                                            db.batch()
+                                                    .update(centralRef, update)
+                                                    .update(senderRef, update)
+                                                    .update(receiverRef, update)
+                                                    .commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Log.d(TAG, "onComplete: Update last message completed");
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        });
+            }
         };
         rvMessages.setAdapter(adapter);
-
+//        setAdapterOnClick();
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
         adapter.startListening();
+    }
+
+    private void onListItemSelect(int position) {
+        adapter.toggleSelection(position);//Toggle the selection
+        Toast.makeText(this, "Selected " + position, Toast.LENGTH_SHORT).show();
+        boolean hasCheckedItems = adapter.getSelectedCount() > 0;//Check if any items are already selected or not
+
+        if (hasCheckedItems && mActionMode == null)
+            // there are some selected items, start the actionMode
+            mActionMode = startSupportActionMode(new MessageActionModeCallBack(adapter) {
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+                    adapter.removeSelection();
+                    Log.d(TAG, "onDestroyActionMode: setNullToActionMode");
+                    setNullToActionMode();
+                }
+            });
+        else if (!hasCheckedItems && mActionMode != null)
+            // there no selected items, finish the actionMode
+            mActionMode.finish();
+        if (mActionMode != null)
+            //set action mode title on item selection
+            mActionMode.setTitle(String.valueOf(adapter
+                    .getSelectedCount()) + " selected");
+    }
+
+    //Set action mode null after use
+    public void setNullToActionMode() {
+        if (mActionMode != null) {
+            Log.d(TAG, "setNullToActionMode: Completed");
+            mActionMode = null;
+        }
+    }
+
+    private void setAdapterOnClick() {
+        rvMessages.addOnItemTouchListener(new MessageTouchListener(rvMessages,
+                new MessageClickListener() {
+                    @Override
+                    public void onClick(View view, int position) {
+                        if (mActionMode != null) {
+                            Log.d(TAG, "onClick: At " + position);
+                            onListItemSelect(position);
+                        }
+                    }
+
+                    @Override
+                    public void onLongClick(View view, int position) {
+                        Log.d(TAG, "onLongClick: At " + position);
+                        onListItemSelect(position);
+                    }
+                }));
     }
 
     public void onSendButtonClicked() {
@@ -232,9 +355,15 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
                 .document(chatId)
                 .collection(Conversation.FIELD_MESSAGES)
                 .document();
+        String newMessageId = newMessageRef.getId();
 
-        Map<String, Object> messageMap = Message.initMessageMap(senderId, senderName,
-                receiverId, receiverName, messageContent);
+        Map<String, Object> messageMap = Message.initMessageMap(
+                newMessageId,
+                senderId,
+                senderName,
+                receiverId,
+                receiverName,
+                messageContent);
 
         Map<String, Object> lastMessageUpdate = new HashMap<>();
         lastMessageUpdate.put(Conversation.FIELD_LAST_MESSAGE, messageMap);
@@ -260,8 +389,10 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
         DocumentReference centralConversationRef = db.collection(Conversation.COLLECTION_NAME).document();
 
         DocumentReference messageRef = centralConversationRef.collection(Conversation.FIELD_MESSAGES).document();
+        String newMessageId = messageRef.getId();
         chatId = centralConversationRef.getId();
         Map<String, Object> messageMap = Message.initMessageMap(
+                newMessageId,
                 senderId,
                 senderName,
                 receiverId,
@@ -343,8 +474,16 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
     }
 
     @Override
-    public void onMessageClicked(DocumentSnapshot msg) {
+    public void onMessageClicked(int position) {
+        Log.d(TAG, "onMessageClicked: At " + position);
+        onListItemSelect(position);
+    }
 
+    @Override
+    public boolean onMessageLongClicked(int position) {
+        Log.d(TAG, "onMessageLongClicked: At " + position);
+        onListItemSelect(position);
+        return true;
     }
 }
 

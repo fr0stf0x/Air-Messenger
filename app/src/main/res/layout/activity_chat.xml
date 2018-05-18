@@ -55,7 +55,7 @@
                 android:src="@drawable/baseline_insert_emoticon_white_24" />
 
             <EditText
-                android:id="@+id/msgContent"
+                android:id="@+id/edtMessage"
                 style="@style/OvalBox48dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

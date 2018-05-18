@@ -20,6 +20,7 @@
         <item name="colorAccent">@color/secondaryColor.Light</item>
         <item name="actionBarStyle">@style/AppBarOverlay</item>
         <item name="android:fontFamily">@font/montserrat</item>
+
     </style>
 
     <style name="NoActionBarTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
@@ -29,6 +30,14 @@
         <item name="buttonStyle">@style/buttonStyleLight</item>
         <item name="colorAccent">@color/secondaryColor.Light</item>
         <item name="android:fontFamily">@font/open_sans</item>
+        <item name="android:windowNoTitle">true</item>
+
+        <!--ActionMode-->
+        <item name="actionMenuTextColor">@android:color/white</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">@color/primaryColor.Light</item>
     </style>
 
     <style name="NoActionBarTheme.Dark" parent="Theme.AppCompat.NoActionBar">

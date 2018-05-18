@@ -89,6 +89,7 @@ public class ConversationAdapter extends FirestoreAdapter<ConversationAdapter.Co
             if (chatPhoto != null && !chatPhoto.equals("")) {
                 Picasso.get()
                         .load(chatPhoto)
+                        .placeholder(R.drawable.male_50)
                         .into(ivChatPhoto);
             }
             tvChatName.setText(conversationSnapshot.getString(Conversation.FIELD_CONVERSATION_NAME));

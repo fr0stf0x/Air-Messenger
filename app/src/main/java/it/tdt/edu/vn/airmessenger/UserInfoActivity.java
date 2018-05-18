@@ -1,49 +1,39 @@
 package it.tdt.edu.vn.airmessenger;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.TooltipCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
-import id.zelory.compressor.Compressor;
 import it.tdt.edu.vn.airmessenger.models.FriendRequest;
 import it.tdt.edu.vn.airmessenger.models.User;
 import it.tdt.edu.vn.airmessenger.utils.FirebaseHelper;
@@ -57,7 +47,7 @@ import it.tdt.edu.vn.airmessenger.utils.FirebaseHelper;
  * When in option 1, user can edit his/her information.
  * When in option 2, user can add friend by click button add friend.
  *
- * @see #btnAddFriend
+ * @see #btnFunction
  */
 
 public class UserInfoActivity extends AppCompatActivity {
@@ -78,7 +68,7 @@ public class UserInfoActivity extends AppCompatActivity {
     CircleImageView imgUserAvatar;
 
     @BindView(R.id.btn_add_friend)
-    Button btnAddFriend;
+    Button btnFunction;
 
     @BindView(R.id.tvUsername)
     TextView tvUsername;
@@ -112,10 +102,10 @@ public class UserInfoActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null) {
             refUserId = intent.getStringExtra(User.USER_ID_KEY);
-            if (!refUserId.equals("") || refUserId == null) {
-                bindUserInfo(refUserId);
-            }
+        } else {
+            refUserId = FirebaseHelper.getCurrentUser().getUid();
         }
+        bindUserInfo(refUserId);
     }
 
     @Override
@@ -167,34 +157,46 @@ public class UserInfoActivity extends AppCompatActivity {
                                         .load(firebaseUser.getPhotoUrl())
                                         .placeholder(R.drawable.man_icon)
                                         .into(imgUserAvatar);
+                                TooltipCompat.setTooltipText(imgUserAvatar, "Click me to change your avatar");
                             }
 
                             if (userId.equals(firebaseUser.getUid())) {
-                                btnAddFriend.setVisibility(View.GONE);
                                 imgUserAvatar.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         CropImage.activity()
-                                                .setActivityTitle(getResources().getString(R.string.activity_crop_image_title))
+                                                .setActivityTitle(getResources().getString(R.string.activity_crop_image_label))
                                                 .setCropShape(CropImageView.CropShape.OVAL)
                                                 .setAspectRatio(1, 1)
                                                 .setGuidelines(CropImageView.Guidelines.ON)
                                                 .start(UserInfoActivity.this);
                                     }
                                 });
+                                btnFunction.setText(getResources().getString(R.string.button_edit_info));
+                                btnFunction.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        editUserInfo();
+                                    }
+                                });
+                            } else {
+                                btnFunction.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        sendAddRequest(fullUserInfo);
+                                    }
+                                });
                             }
-
-                            btnAddFriend.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    sendAddRequest(fullUserInfo);
-                                }
-                            });
-
                             hideProgressBar();
                         }
                     }
                 });
+    }
+
+    private void editUserInfo() {
+        Intent intent = new Intent(UserInfoActivity.this
+                , UserEditActivity.class);
+        startActivity(intent);
     }
 
     private void hideProgressBar() {
@@ -230,8 +232,8 @@ public class UserInfoActivity extends AppCompatActivity {
                                     .document(senderInfo.getId())
                                     .set(request);
 
-                            btnAddFriend.setText(getResources().getString(R.string.button_add_friend_disabled));
-                            btnAddFriend.setEnabled(false);
+                            btnFunction.setText(getResources().getString(R.string.button_add_friend_disabled));
+                            btnFunction.setEnabled(false);
                         } else {
                             Log.d(TAG, "Error happened");
                         }

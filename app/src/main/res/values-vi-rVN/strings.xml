@@ -21,6 +21,9 @@
     <string name="action_log_out" translatable="true">Đăng xuất</string>
     <string name="action_settings" translatable="true">Cài đặt</string>
     <string name="action_search">Tìm kiếm</string>
+    <string name="action_copy">Sao chép</string>
+    <string name="action_forward">Chuyển tiếp</string>
+    <string name="action_delete">Xóa</string>
 
     <!--Sex value-->
     <string name="sex_male">Nam</string>
@@ -39,13 +42,23 @@
     <string name="button_start">Bắt đầu</string>
     <string name="button_send">Gởi</string>
     <string name="button_add_friend">Thêm bạn bè</string>
+    <string name="button_edit_info">Cập nhật thông tin</string>
     <string name="button_add_friend_disabled">Đã gởi lời mời kết bạn</string>
     <string name="button_request_accept">Chấp nhận</string>
     <string name="button_request_reject">Từ chối</string>
+    <string name="button_set_age">Chọn</string>
 
     <string name="activity_chat_label">Tin nhắn mới</string>
     <string name="activity_all_users_label">Khám phá</string>
     <string name="activity_user_info_label">Thông tin người dùng</string>
+    <string name="activity_user_edit_label">Chỉnh sửa thông tin</string>
+    <string name="activity_crop_image_label">Cắt ảnh</string>
+
+    <!--TextView text-->
+    <string name="tv_name">Tên</string>
+    <string name="tv_sex">Giới tính</string>
+    <string name="tv_age">Tuổi</string>
+    <string name="tv_phone">Số điện thoại</string>
 
     <string name="back_again_to_exit">Nhấn QUAY LẠI một lần nữa để thoát ứng dụng</string>
     <string name="friend_request_notification">Lời mời kết bạn mới</string>
@@ -53,9 +66,10 @@
     <string name="search_for_friend">Thêm bạn thêm vui</string>
     <string name="default_phone_number">Không có số điện thoại</string>
     <string name="text_yourself">Bạn</string>
-    <string name="activity_crop_image_title">Cắt ảnh</string>
     <string name="tooltip_fab_new_message">Gởi tin nhắn mới</string>
     <string name="tooltip_fab_new_friend">Thêm bạn</string>
+    <string name="action_thumb_up">Thích</string>
+    <string name="action_thumb_down">Không thích</string>
 
 
 </resources>

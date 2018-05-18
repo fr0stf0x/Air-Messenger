@@ -26,6 +26,9 @@ import it.tdt.edu.vn.airmessenger.models.User;
 public class UserAdapter extends FirestoreAdapter<UserAdapter.UserViewHolder> {
     public static final String TAG = "UserAdapter";
 
+    public static final int TYPE_SETTING = 1;
+    public static final int TYPE_VIEW = 0;
+
     private OnUserClickListener mListener;
 
     public UserAdapter(Query query, OnUserClickListener listener, int flag) {
@@ -40,6 +43,18 @@ public class UserAdapter extends FirestoreAdapter<UserAdapter.UserViewHolder> {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.contact_summary, parent, false);
         return new UserViewHolder(view);
+    }
+
+    /**
+     * if userId equals {@link FirebaseUser#getUid()}
+     * this activity will become account setting activity
+     */
+    @Override
+    public int getItemViewType(int position) {
+        if (getSnapshot(position).getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            return TYPE_SETTING;
+        }
+        return TYPE_VIEW;
     }
 
     @Override
