@@ -14,7 +14,7 @@
     <string name="log_out_successfully">Successfully logged out</string>
 
     <string name="sign_new_notification">Hi %1$s, enjoy your time in %2$s</string>
-    <string name="sign_old_notification">Welcome back, %1$s</string>
+    <string name="sign_old_notification">Welcome, %1$s</string>
 
     <!--Activity label-->
     <string name="activity_chat_label">New message</string>
@@ -32,7 +32,7 @@
     <string name="button_add_friend">Add friend</string>
     <string name="button_edit_info">Update your info</string>
     <string name="button_send">Send</string>
-    <string name="button_add_friend_disabled">Friend request sent</string>
+    <string name="button_add_friend_disabled">Undo send request</string>
     <string name="button_request_accept">Accept</string>
     <string name="button_request_reject">Reject</string>
     <string name="button_set_age">Pick</string>
@@ -42,6 +42,8 @@
     <string name="tv_sex">Sex</string>
     <string name="tv_age">Age</string>
     <string name="tv_phone">Phone</string>
+    <string name="tv_status">Status</string>
+    <string name="tv_email" translatable="false">Email</string>
 
 
     <!--Sex value-->
@@ -56,6 +58,7 @@
     <string name="action_copy">Copy</string>
     <string name="action_forward">Forward</string>
     <string name="action_delete">Delete</string>
+    <string name="action_fav">Add to favorite</string>
 
 
     <!--Default value-->
@@ -64,7 +67,7 @@
     <string name="default_status">Hi. I am using Air Messenger</string>
     <string name="default_thumb_image" translatable="false">default_thumb_image</string>
     <string name="default_image" translatable="false">default_image</string>
-    <string name="default_request_send_time">00:00</string>
+    <string name="default_request_send_time" translatable="false">00:00</string>
     <string name="default_sex">Not defined sexual</string>
     <string name="default_age">Not defined age</string>
     <string name="default_phone_number">Not defined number</string>
@@ -72,7 +75,6 @@
 
     <!--Message compose hint-->
     <string name="compose_hint">Your message ...</string>
-
 
 
     <string name="appbar_scrolling_view_behavior" translatable="false">
@@ -85,7 +87,32 @@
 
     <string name="tooltip_fab_new_message">Send a new message</string>
     <string name="tooltip_fab_new_friend">Add a new friend</string>
+    <string name="tooltip_cannot_set_email">You can not change your email
+    because you signed in with this email</string>
     <string name="action_thumb_up">Thumb up</string>
     <string name="action_thumb_down">Thumb down</string>
+    <string name="dialog_set_age_label">Set your age</string>
 
+    <string name="delete_success">Delete %1$s successfully</string>
+    <string name="delete_fail">Delete %1$s failed</string>
+    <string name="copy_message_success">Message(s) copied</string>
+
+    <string name="already_friend">Unfriend</string>
+
+    <string name="update_success">Update information successfully</string>
+    <string name="update_fail">Update information failed</string>
+
+    <string name="delete_alert">You are going to delete %1$s forever, continue?</string>
+    <string name="delete_okay">Delete anyway</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="unfriend_success">Unfriend successfully</string>
+    <string name="unfriend_fail">Unfriend failed</string>
+
+    <string name="arg_message">this message</string>
+    <string name="arg_messages">these messages</string>
+    <string name="arg_conversation">this conversation</string>
+    <string name="arg_conversations">these conversations</string>
+    <string name="arg_user">this friend</string>
+    <string name="arg_users">these friends</string>
 </resources>

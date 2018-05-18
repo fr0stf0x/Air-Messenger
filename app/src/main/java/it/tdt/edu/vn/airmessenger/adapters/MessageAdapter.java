@@ -88,7 +88,7 @@ public class MessageAdapter extends FirestoreAdapter<MessageAdapter.MessageViewH
             photo = receiverPhoto;
         }
         holder.row.setBackgroundColor(mSelectedItemsIds.get(position) ?
-                App.getContext().getResources().getColor(R.color.primaryDarkColor_Light) : Color.TRANSPARENT);
+                App.getContext().getResources().getColor(R.color.primaryLightColor_Light) : Color.TRANSPARENT);
         holder.bind(getSnapshot(position), position, photo, mListener);
     }
 
@@ -100,9 +100,9 @@ public class MessageAdapter extends FirestoreAdapter<MessageAdapter.MessageViewH
         if (position != 0) {
             Date previousDate = (Date) getSnapshot(position - 1).get(Message.FIELD_TIME);
             Date today = (Date) getSnapshot(position).get(Message.FIELD_TIME);
-            SimpleDateFormat day = new SimpleDateFormat("dd", Locale.getDefault());
-            int previousDay = Integer.parseInt(day.format(previousDate));
-            int thisDay = Integer.parseInt(day.format(today));
+            SimpleDateFormat dayFormat = new SimpleDateFormat("dd", Locale.getDefault());
+            int previousDay = Integer.parseInt(dayFormat.format(previousDate));
+            int thisDay = Integer.parseInt(dayFormat.format(today));
             if (thisDay == previousDay) {
                 isNewDay = false;
             }
@@ -198,7 +198,7 @@ public class MessageAdapter extends FirestoreAdapter<MessageAdapter.MessageViewH
             }
 
             msgContent.setText(msg.getContent());
-            msgContent.setTextIsSelectable(true);
+//            msgContent.setTextIsSelectable(true);
             SimpleDateFormat dt = new SimpleDateFormat("HH:mm", Locale.getDefault());
             tvTimeSend.setText(dt.format(msg.getTime()));
 
@@ -210,7 +210,7 @@ public class MessageAdapter extends FirestoreAdapter<MessageAdapter.MessageViewH
             }
             tvTime.setText(day);
 
-            row.setOnLongClickListener(new View.OnLongClickListener() {
+            bubble.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     if (listener == null) {
@@ -219,7 +219,7 @@ public class MessageAdapter extends FirestoreAdapter<MessageAdapter.MessageViewH
                     return listener.onMessageLongClicked(position);
                 }
             });
-            row.setOnClickListener(new View.OnClickListener() {
+            bubble.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     listener.onMessageClicked(position);

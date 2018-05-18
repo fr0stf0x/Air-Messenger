@@ -1,11 +1,14 @@
 package it.tdt.edu.vn.airmessenger.adapters;
 
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.Continuation;
@@ -23,6 +26,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import it.tdt.edu.vn.airmessenger.App;
 import it.tdt.edu.vn.airmessenger.R;
 import it.tdt.edu.vn.airmessenger.interfaces.OnChatSelectedListener;
 import it.tdt.edu.vn.airmessenger.models.Conversation;
@@ -34,15 +38,19 @@ import it.tdt.edu.vn.airmessenger.utils.FirebaseHelper;
 public class ConversationAdapter extends FirestoreAdapter<ConversationAdapter.ConversationViewHolder> {
 
     OnChatSelectedListener mListener;
+    private SparseBooleanArray mSelectedItemsIds;
 
     public ConversationAdapter(Query query, OnChatSelectedListener listener) {
         super(query);
         mListener = listener;
+        mSelectedItemsIds = new SparseBooleanArray();
     }
 
     @Override
     public void onBindViewHolder(@NonNull ConversationViewHolder holder, int position) {
-        holder.bind(getSnapshot(position), mListener);
+        holder.row.setBackgroundColor(mSelectedItemsIds.get(position) ?
+                App.getContext().getResources().getColor(R.color.primaryLightColor_Light) : Color.TRANSPARENT);
+        holder.bind(getSnapshot(position), position, mListener);
     }
 
     @NonNull
@@ -53,10 +61,45 @@ public class ConversationAdapter extends FirestoreAdapter<ConversationAdapter.Co
         return new ConversationViewHolder(view);
     }
 
+    // For ActionMode
+    public void toggleSelection(int position) {
+        selectView(position, !mSelectedItemsIds.get(position));
+    }
+
+    public void selectView(int position, boolean value) {
+        if (value) {
+            mSelectedItemsIds.put(position, value);
+        } else {
+            mSelectedItemsIds.delete(position);
+        }
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public DocumentSnapshot getSnapshot(int index) {
+        return super.getSnapshot(index);
+    }
+
+    public int getSelectedCount() {
+        return mSelectedItemsIds.size();
+    }
+
+    public SparseBooleanArray getSelectedIds() {
+        return mSelectedItemsIds;
+    }
+
+    public void removeSelection() {
+        mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
+
     /**
      * ViewHolder must be a static class so that we can use {@link ButterKnife}
      */
     static class ConversationViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.layout)
+        RelativeLayout row;
 
         @BindView(R.id.ivChatPhoto)
         ImageView ivChatPhoto;
@@ -75,7 +118,7 @@ public class ConversationAdapter extends FirestoreAdapter<ConversationAdapter.Co
             ButterKnife.bind(this, itemView);
         }
 
-        private void bind(final DocumentSnapshot conversationSnapshot,
+        private void bind(final DocumentSnapshot conversationSnapshot, final int position,
                           final OnChatSelectedListener listener) {
             final String TAG = "Conversation bind";
             final String chatId = conversationSnapshot.getId();
@@ -99,10 +142,17 @@ public class ConversationAdapter extends FirestoreAdapter<ConversationAdapter.Co
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onConversationClicked(conversationSnapshot);
+                    listener.onConversationClicked(position);
                 }
             });
 
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    listener.onConversationLongClicked(position);
+                    return true;
+                }
+            });
         }
     }
 }

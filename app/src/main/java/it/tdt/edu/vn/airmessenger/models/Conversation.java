@@ -1,9 +1,25 @@
 package it.tdt.edu.vn.airmessenger.models;
 
+import android.support.annotation.NonNull;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.IgnoreExtraProperties;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+
+import it.tdt.edu.vn.airmessenger.App;
+import it.tdt.edu.vn.airmessenger.R;
+import it.tdt.edu.vn.airmessenger.utils.FirebaseHelper;
 
 @IgnoreExtraProperties
 public class Conversation {
@@ -67,6 +83,53 @@ public class Conversation {
 
     public void setConversationName(String conversationName) {
         this.conversationName = conversationName;
+    }
+
+    public static void deleteConversation(String chatId, String senderId, String receiverId) {
+        FirebaseFirestore db = FirebaseHelper.getFirestore();
+        final DocumentReference centralRef = db
+                .collection(Conversation.COLLECTION_NAME)
+                .document(chatId);
+
+        final DocumentReference senderRef = db
+                .collection(User.COLLECTION_NAME)
+                .document(senderId)
+                .collection(Conversation.COLLECTION_NAME)
+                .document(chatId);
+        final DocumentReference receiverRef = db
+                .collection(User.COLLECTION_NAME)
+                .document(receiverId)
+                .collection(Conversation.COLLECTION_NAME)
+                .document(chatId);
+        Query query = centralRef.collection(Conversation.FIELD_MESSAGES);
+        final WriteBatch batch = db.batch();
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot message : task.getResult().getDocuments()) {
+                        DocumentReference messageToDel = message.getReference();
+                        batch.delete(messageToDel);
+                    }
+                    batch
+                            .delete(centralRef)
+                            .delete(senderRef)
+                            .delete(receiverRef)
+                            .commit()
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Toast.makeText(App.getContext(),
+                                            String.format(Locale.getDefault(), App.getContext().getResources()
+                                                    .getString(R.string.delete_success), "conversation"),
+                                            Toast.LENGTH_SHORT)
+                                            .show();
+                                }
+                            });
+                }
+            }
+        });
+
     }
 
     public static Map<String, Object> initCentralConversation(String firstUserId,

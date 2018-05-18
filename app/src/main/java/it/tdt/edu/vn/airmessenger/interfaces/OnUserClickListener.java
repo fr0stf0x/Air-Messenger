@@ -1,7 +1,10 @@
 package it.tdt.edu.vn.airmessenger.interfaces;
 
-import com.google.firebase.firestore.DocumentSnapshot;
+public interface OnUserClickListener extends RecyclerClickListener {
+    void onUserClick(int position);
 
-public interface OnUserClickListener {
-    void onUserClick(DocumentSnapshot user);
+    boolean onUserLongClick(int position);
+
+    @Override
+    void onItemSelected(int position);
 }

@@ -8,19 +8,18 @@
         <item name="colorAccent">@color/secondaryColor</item>
         <item name="actionBarStyle">@style/AppBarOverlay</item>
         <item name="android:colorBackground">@color/primaryColor</item>
-        <item name="android:fontFamily">@font/open_sans</item>
+        <item name="android:fontFamily">@font/montserrat</item>
     </style>
 
 
     <style name="LightTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/primaryColor.Light</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor.Light</item>
-        <item name="buttonStyle">@style/buttonStyleLight</item>
         <item name="android:textColor">@color/primaryTextColor.Light</item>
+        <item name="buttonStyle">@style/buttonStyleLight</item>
         <item name="colorAccent">@color/secondaryColor.Light</item>
         <item name="actionBarStyle">@style/AppBarOverlay</item>
         <item name="android:fontFamily">@font/montserrat</item>
-
     </style>
 
     <style name="NoActionBarTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
@@ -29,10 +28,10 @@
         <item name="android:textColor">@color/primaryTextColor.Light</item>
         <item name="buttonStyle">@style/buttonStyleLight</item>
         <item name="colorAccent">@color/secondaryColor.Light</item>
-        <item name="android:fontFamily">@font/open_sans</item>
-        <item name="android:windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/montserrat</item>
 
         <!--ActionMode-->
+        <item name="android:windowNoTitle">true</item>
         <item name="actionMenuTextColor">@android:color/white</item>
         <item name="android:windowDisablePreview">true</item>
         <item name="windowActionBar">false</item>
@@ -47,23 +46,22 @@
         <item name="buttonStyle">@style/buttonStyleDark</item>
         <item name="colorAccent">@color/secondaryColor</item>
         <item name="android:colorBackground">@color/primaryColor</item>
-        <item name="android:fontFamily">@font/open_sans</item>
+        <item name="android:fontFamily">@font/montserrat</item>
     </style>
 
     <style name="buttonStyleDark" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="android:fontFamily">@font/coiny</item>
+        <item name="android:fontFamily">@font/source_sans_pro_bold</item>
         <item name="android:textAlignment">center</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/outline_button</item>
-        <item name="android:backgroundTint">@color/secondaryColor</item>
+        <item name="android:backgroundTint">@color/secondaryDarkColor.Light</item>
         <item name="android:textColor">@color/primaryTextColor</item>
         <item name="android:padding">8dp</item>
     </style>
 
     <style name="buttonStyleLight" parent="buttonStyleDark">
-        <item name="android:backgroundTint">@color/secondaryColor.Light</item>
-        <item name="android:textColor">@color/primaryTextColor.Light</item>
+        <item name="android:backgroundTint">@color/secondaryDarkColor.Light</item>
     </style>
 
     <style name="AppBarOverlay" parent="Widget.AppCompat.ActionBar.Solid">

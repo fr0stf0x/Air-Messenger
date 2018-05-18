@@ -15,7 +15,7 @@
     <string name="log_out_successfully">Đăng xuất thành công</string>
 
     <string name="sign_new_notification">Chào %1$s, chúc vui với %2$s</string>
-    <string name="sign_old_notification">Chào mừng bạn quay trở lại, %1$s</string>
+    <string name="sign_old_notification">Chào mừng bạn, %1$s</string>
 
 
     <string name="action_log_out" translatable="true">Đăng xuất</string>
@@ -24,6 +24,7 @@
     <string name="action_copy">Sao chép</string>
     <string name="action_forward">Chuyển tiếp</string>
     <string name="action_delete">Xóa</string>
+    <string name="action_fav">Thêm vào yêu thích</string>
 
     <!--Sex value-->
     <string name="sex_male">Nam</string>
@@ -43,7 +44,7 @@
     <string name="button_send">Gởi</string>
     <string name="button_add_friend">Thêm bạn bè</string>
     <string name="button_edit_info">Cập nhật thông tin</string>
-    <string name="button_add_friend_disabled">Đã gởi lời mời kết bạn</string>
+    <string name="button_add_friend_disabled">Không gởi nữa</string>
     <string name="button_request_accept">Chấp nhận</string>
     <string name="button_request_reject">Từ chối</string>
     <string name="button_set_age">Chọn</string>
@@ -59,6 +60,8 @@
     <string name="tv_sex">Giới tính</string>
     <string name="tv_age">Tuổi</string>
     <string name="tv_phone">Số điện thoại</string>
+    <string name="tv_status">Trạng thái</string>
+
 
     <string name="back_again_to_exit">Nhấn QUAY LẠI một lần nữa để thoát ứng dụng</string>
     <string name="friend_request_notification">Lời mời kết bạn mới</string>
@@ -70,6 +73,30 @@
     <string name="tooltip_fab_new_friend">Thêm bạn</string>
     <string name="action_thumb_up">Thích</string>
     <string name="action_thumb_down">Không thích</string>
+    <string name="dialog_set_age_label">Chọn số tuổi của bạn</string>
+    <string name="tooltip_cannot_set_email">Bạn không thể thay đổi email
+    vì bạn đã dùng email này để đăng nhập</string>
 
+    <string name="delete_success">Xoá %1$s thành công</string>
+    <string name="delete_fail">Xóa %1$s thất bại</string>
+    <string name="delete_alert">Bạn sẽ xóa vĩnh viễn %1$s này, tiếp tục không?</string>
 
+    <string name="copy_message_success">Đã copy nội dung tin nhắn</string>
+
+    <string name="update_success">Cập nhật thông tin thành công</string>
+    <string name="update_fail">Cập nhật thông tin thất bại</string>
+
+    <string name="delete_okay">Cứ xóa đi</string>
+    <string name="cancel">Hủy</string>
+
+    <string name="already_friend">Hủy kết bạn</string>
+    <string name="unfriend_success">Hủy bạn bè thành công</string>
+    <string name="unfriend_fail">Hủy bạn bè thất bại</string>
+
+    <string name="arg_message">tin nhắn</string>
+    <string name="arg_messages">các tin nhắn</string>
+    <string name="arg_conversation">đoạn hội thoại</string>
+    <string name="arg_conversations">các đoạn hội thoại</string>
+    <string name="arg_user">người bạn này</string>
+    <string name="arg_users">những người bạn này</string>
 </resources>

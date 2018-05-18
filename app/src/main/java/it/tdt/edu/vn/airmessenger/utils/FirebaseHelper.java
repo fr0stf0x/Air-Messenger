@@ -98,7 +98,7 @@ public class FirebaseHelper {
                                         public Void then(@NonNull Task<Void> task) throws Exception {
                                             if (task.isSuccessful()) {
                                                 Log.d(TAG, "then: Success, now upload thumb");
-                                                setThumbImage(imageFileUri);
+                                                setFirestoreImages(imageFileUri, profileUpdates.getPhotoUri());
                                             }
                                             return null;
                                         }
@@ -109,13 +109,13 @@ public class FirebaseHelper {
                 });
     }
 
-    public static void setThumbImage(final Uri imageUri) {
+    public static void setFirestoreImages(final Uri localImageUri, final Uri cloudImageUri) {
         final String TAG = "Set_thumb_image";
 
         StorageReference thumbRef = getStorage().child(getCurrentUser().getUid())
                 .child(User.DATA_KEY).child(User.FIELD_THUMB_IMAGE + User.IMAGE_TYPE);
 
-        File thumb_file = new File(imageUri.getPath());
+        File thumb_file = new File(localImageUri.getPath());
         Bitmap thumbnailBitmap = null;
         Log.d(TAG, "setThumbImage: init");
 
@@ -149,9 +149,10 @@ public class FirebaseHelper {
                                 Map<String, Object> updates = new HashMap<>();
                                 if (thumbDownUrl != null) {
                                     Log.d(TAG, "then: ThumbDownURL: " + thumbDownUrl.toString());
+                                    Log.d(TAG, "onComplete: ImageDownURL " + cloudImageUri.toString());
                                     updates.put(User.FIELD_THUMB_IMAGE,
                                             thumbDownUrl.toString());
-                                    updates.put(User.FIELD_IMAGE, imageUri.toString());
+                                    updates.put(User.FIELD_IMAGE, cloudImageUri.toString());
 
                                     getFirestore().collection(User.COLLECTION_NAME)
                                             .document(getCurrentUser().getUid())
@@ -172,12 +173,10 @@ public class FirebaseHelper {
                                                     Log.d(TAG, "onCanceled: Update canceled");
                                                 }
                                             });
-                                }
-                                else {
+                                } else {
                                     Log.d(TAG, "onComplete: Error getting thumb image download url");
                                 }
-                            }
-                            else {
+                            } else {
                                 Log.d(TAG, "onComplete: Error uploading thumb image to FirebaseStorage");
                             }
                         }

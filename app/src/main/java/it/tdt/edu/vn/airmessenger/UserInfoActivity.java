@@ -12,8 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -27,13 +27,12 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+import it.tdt.edu.vn.airmessenger.fragments.UserListFragment;
 import it.tdt.edu.vn.airmessenger.models.FriendRequest;
 import it.tdt.edu.vn.airmessenger.models.User;
 import it.tdt.edu.vn.airmessenger.utils.FirebaseHelper;
@@ -56,6 +55,11 @@ public class UserInfoActivity extends AppCompatActivity {
     public static final int USER_FLAG = 0;
     public static final int SELF_FLAG = 1;
 
+    public static final int TYPE_SELF = 0;
+    public static final int TYPE_UNKNOWN = 1;
+    public static final int TYPE_FRIEND = 2;
+    public static final int TYPE_SENT_REQUEST = 3;
+
     private int flag = USER_FLAG;
 
     @BindView(R.id.layout)
@@ -73,20 +77,24 @@ public class UserInfoActivity extends AppCompatActivity {
     @BindView(R.id.tvUsername)
     TextView tvUsername;
 
+    @BindView(R.id.tvPhone)
+    TextView tvPhone;
+
+    @BindView(R.id.tvEmail)
+    TextView tvEmail;
+
     @BindView(R.id.tvStatus)
     TextView tvStatus;
 
-    @BindView(R.id.tvAge)
-    TextView tvAge;
-
-    @BindView(R.id.tvSex)
-    TextView tvSex;
+    @BindView(R.id.tvAgeAndSex)
+    TextView tvAgeAndSex;
 
     FirebaseUser firebaseUser;
     StorageReference storage;
     User refUser;
     FirebaseFirestore db;
     String refUserId;
+    int type = TYPE_SELF;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,12 +106,80 @@ public class UserInfoActivity extends AppCompatActivity {
         storage = FirebaseStorage.getInstance().getReference();
 
         ButterKnife.bind(this);
+    }
 
+    private void setupButton() {
+        switch (type) {
+            case TYPE_UNKNOWN:
+                btnFunction.setText(getString(R.string.button_add_friend));
+                setButtonBackground(true);
+                btnFunction.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        FriendRequest.sendRequest(firebaseUser.getUid(), firebaseUser.getDisplayName(), refUserId)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            type = TYPE_SENT_REQUEST;
+                                            setupButton();
+                                        }
+                                    }
+                                });
+                    }
+                });
+                break;
+            case TYPE_SENT_REQUEST:
+                btnFunction.setText(getString(R.string.button_add_friend_disabled));
+                setButtonBackground(false);
+                btnFunction.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        FriendRequest.undoSendRequest(firebaseUser.getUid(), refUserId)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            type = TYPE_UNKNOWN;
+                                            setupButton();
+                                        }
+                                    }
+                                });
+                    }
+                });
+                break;
+            case TYPE_FRIEND:
+                btnFunction.setText(getString(R.string.already_friend));
+                setButtonBackground(false);
+                btnFunction.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        User.unfriend(refUserId).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    type = TYPE_UNKNOWN;
+                                    setupButton();
+                                }
+                            }
+                        });
+                    }
+                });
+            default:
+                break;
+
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         Intent intent = getIntent();
         if (intent != null) {
             refUserId = intent.getStringExtra(User.USER_ID_KEY);
-        } else {
-            refUserId = FirebaseHelper.getCurrentUser().getUid();
+        }
+        if (refUserId == null || refUserId.equals("")) {
+            refUserId = firebaseUser.getUid();
         }
         bindUserInfo(refUserId);
     }
@@ -148,19 +224,30 @@ public class UserInfoActivity extends AppCompatActivity {
                                 finish();
                             }
                             // TODO(DONE) SET age and sex
-                            tvAge.setText(String.valueOf(refUser.getAge()));
-                            tvSex.setText(refUser.getSex());
+                            tvAgeAndSex.setText(String.format(Locale.getDefault(), "%s, at %s",
+                                    refUser.getSex(),
+                                    String.valueOf(refUser.getAge())
+                            ));
+
                             tvStatus.setText(refUser.getStatus());
+
                             tvUsername.setText(refUser.getName());
-                            if (firebaseUser.getPhotoUrl() != null) {
+
+                            if (refUser.getImage() != null) {
+                                Log.d(TAG, "onComplete: " + refUser.getImage());
                                 Picasso.get()
-                                        .load(firebaseUser.getPhotoUrl())
+                                        .load(refUser.getImage())
                                         .placeholder(R.drawable.man_icon)
                                         .into(imgUserAvatar);
-                                TooltipCompat.setTooltipText(imgUserAvatar, "Click me to change your avatar");
                             }
 
+                            tvEmail.setText("Email: " + refUser.getEmail());
+
+                            tvPhone.setText("Tel: " + refUser.getPhoneNumber());
+
+
                             if (userId.equals(firebaseUser.getUid())) {
+                                TooltipCompat.setTooltipText(imgUserAvatar, "Click me to change your avatar");
                                 imgUserAvatar.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -180,10 +267,39 @@ public class UserInfoActivity extends AppCompatActivity {
                                     }
                                 });
                             } else {
-                                btnFunction.setOnClickListener(new View.OnClickListener() {
+                                // kiem tra co phai la ban be hay chua
+                                db.collection(User.COLLECTION_NAME)
+                                        .document(firebaseUser.getUid())
+                                        .collection(UserListFragment.COLLECTION_NAME)
+                                        .document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
-                                    public void onClick(View view) {
-                                        sendAddRequest(fullUserInfo);
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            if (task.getResult().exists()) {
+                                                final DocumentSnapshot friend = task.getResult();
+                                                type = TYPE_FRIEND;
+                                                setupButton();
+
+                                            } else {
+                                                // Kiem tra co goi loi moi ket ban hay chua
+                                                db.collection(User.COLLECTION_NAME)
+                                                        .document(userId)
+                                                        .collection(FriendRequest.COLLECTION_NAME)
+                                                        .document(firebaseUser.getUid())
+                                                        .get()
+                                                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    if (task.getResult().exists()) {
+                                                                        type = TYPE_SENT_REQUEST;
+                                                                        setupButton();
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
+                                            }
+                                        }
                                     }
                                 });
                             }
@@ -191,6 +307,15 @@ public class UserInfoActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+
+    private void setButtonBackground(boolean enable) {
+        if (!enable)
+            btnFunction.setBackgroundColor(getResources().getColor(R.color.error));
+        else {
+            btnFunction.setBackgroundColor(getResources().getColor(R.color.secondaryDarkColor_Light));
+        }
     }
 
     private void editUserInfo() {
@@ -202,43 +327,5 @@ public class UserInfoActivity extends AppCompatActivity {
     private void hideProgressBar() {
         progressBar.setVisibility(View.GONE);
         layout.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * Add a request in receiver's request list
-     */
-    private void sendAddRequest(final DocumentSnapshot receiverUserSnapshot) {
-        Log.d(TAG, "Send request triggered");
-
-        // Get receiver reference to get the name
-        db.collection(User.COLLECTION_NAME)
-                .document(firebaseUser.getUid())
-                .get()
-                .continueWith(new Continuation<DocumentSnapshot, Void>() {
-                    @Override
-                    public Void then(@NonNull Task<DocumentSnapshot> task) throws Exception {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot senderInfo = task.getResult();
-                            Date sendTime = Calendar.getInstance().getTime();
-                            HashMap<String, Object> request = new HashMap<>();
-
-                            request.put(FriendRequest.FIELD_USER_NAME,
-                                    senderInfo.getString(User.FIELD_NAME));
-                            request.put(FriendRequest.FIELD_SEND_TIME, sendTime);
-
-                            db.collection(User.COLLECTION_NAME)
-                                    .document(receiverUserSnapshot.getId())
-                                    .collection(FriendRequest.COLLECTION_NAME)
-                                    .document(senderInfo.getId())
-                                    .set(request);
-
-                            btnFunction.setText(getResources().getString(R.string.button_add_friend_disabled));
-                            btnFunction.setEnabled(false);
-                        } else {
-                            Log.d(TAG, "Error happened");
-                        }
-                        return null;
-                    }
-                });
     }
 }

@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -30,6 +31,8 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
 
         btnStart = findViewById(R.id.btnStart);
         btnStart.setOnClickListener(new View.OnClickListener() {
@@ -63,15 +66,24 @@ public class StartActivity extends AppCompatActivity {
             if (response != null) {
                 if (resultCode == RESULT_OK) {
                     // Successfully signed in, back to Main Screen
-                    Intent intent = new Intent(this, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
+                    user = mAuth.getCurrentUser();
+                    String toastMsg = String.format(Locale.getDefault(),
+                            getResources().getString(R.string.sign_old_notification),
+                            user.getDisplayName());
+                    Toast.makeText(App.getContext(), toastMsg, Toast.LENGTH_SHORT).show();
+                    startMain();
                 } else {
                     Log.d(TAG, response.getError().toString());
                     Toast.makeText(this, "Error signing in, please try again later!", Toast.LENGTH_LONG).show();
                 }
             }
         }
+    }
+
+    private void startMain() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     @Override

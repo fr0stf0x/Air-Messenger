@@ -13,9 +13,9 @@
     <color name="primaryColor">#283593</color>
     <color name="primaryLightColor">#5f5fc4</color>
     <color name="primaryDarkColor">#001064</color>
-    <color name="secondaryColor">#d50000</color>
-    <color name="secondaryLightColor">#ff5131</color>
-    <color name="secondaryDarkColor">#9b0000</color>
+    <color name="secondaryColor">#ffb300</color>
+    <color name="secondaryLightColor">#ffe54c</color>
+    <color name="secondaryDarkColor">#c68400</color>
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#ffffff</color>
 
@@ -23,9 +23,9 @@
     <color name="primaryColor.Light">#344955</color>
     <color name="primaryLightColor.Light">#4a6572</color>
     <color name="primaryDarkColor.Light">#232f34</color>
-    <color name="secondaryColor.Light">#F9AA33</color>
-    <color name="secondaryLightColor.Light">#56c8d8</color>
-    <color name="secondaryDarkColor.Light">#006978</color>
+    <color name="secondaryColor.Light">#66bb6a</color>
+    <color name="secondaryLightColor.Light">#98ee99</color>
+    <color name="secondaryDarkColor.Light">#338a3e</color>
     <color name="primaryTextColor.Light">#000000</color>
     <color name="secondaryTextColor.Light">#000000</color>
 

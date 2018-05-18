@@ -1,8 +1,12 @@
 package it.tdt.edu.vn.airmessenger;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.ActionMode;
@@ -10,6 +14,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -30,27 +37,26 @@ import com.google.firebase.firestore.WriteBatch;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.tdt.edu.vn.airmessenger.adapters.MessageAdapter;
-import it.tdt.edu.vn.airmessenger.interfaces.MessageClickListener;
-import it.tdt.edu.vn.airmessenger.interfaces.MessageTouchListener;
 import it.tdt.edu.vn.airmessenger.interfaces.OnMessageClickListener;
+import it.tdt.edu.vn.airmessenger.interfaces.RecyclerClickListener;
 import it.tdt.edu.vn.airmessenger.models.Conversation;
 import it.tdt.edu.vn.airmessenger.models.Message;
 import it.tdt.edu.vn.airmessenger.models.User;
 import it.tdt.edu.vn.airmessenger.utils.FirebaseHelper;
-import it.tdt.edu.vn.airmessenger.utils.MessageActionModeCallBack;
 
 /**
  * There are two ways to access this activity
  * 1. By clicking on a user from friend list
  * 2. By clicking on a conversation from conversation list
  */
-public class ChatActivity extends AppCompatActivity implements OnMessageClickListener {
+public class ChatActivity extends AppCompatActivity implements OnMessageClickListener, RecyclerClickListener {
 
     final String TAG = "ChatActivity";
 
@@ -205,8 +211,22 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
             }
 
             @Override
+            protected void onDataChanged() {
+                if (adapter.getItemCount() == 0) {
+                    Conversation.deleteConversation(chatId, senderId, receiverId);
+                }
+            }
+
+            @Override
             protected void onDocumentRemoved(final DocumentChange change) {
                 super.onDocumentRemoved(change);
+
+                Log.d(TAG, "onComplete: oldIndex = " + change.getOldIndex());
+
+                if (change.getOldIndex() == 0) {
+                    Log.d(TAG, "onComplete: need to delete conversation");
+                    return;
+                }
                 db.collection(Conversation.COLLECTION_NAME)
                         .document(chatId)
                         .get()
@@ -222,26 +242,7 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
                                     String msgToDeleteId = (String) msgToDeleteMap
                                             .get(Message.FIELD_MESSAGE_ID);
                                     if (msgToDeleteId.equals(change.getDocument().getId())) {
-                                        Log.d(TAG, "onComplete: " +
-                                                "deleting last message, need to update");
 
-                                        DocumentReference centralRef = db
-                                                .collection(Conversation.COLLECTION_NAME)
-                                                .document(chatId);
-                                        DocumentReference senderRef = db
-                                                .collection(User.COLLECTION_NAME)
-                                                .document(senderId)
-                                                .collection(Conversation.COLLECTION_NAME)
-                                                .document(chatId);
-                                        DocumentReference receiverRef = db
-                                                .collection(User.COLLECTION_NAME)
-                                                .document(receiverId)
-                                                .collection(Conversation.COLLECTION_NAME)
-                                                .document(chatId);
-
-                                        if (change.getOldIndex() == 0) {
-                                            return;
-                                        }
                                         Message newLastMessage = adapter
                                                 .getSnapshot((change.getOldIndex() - 1))
                                                 .toObject(Message.class);
@@ -252,20 +253,6 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
 
                                             Map<String, Object> update = new HashMap<>();
                                             update.put(Conversation.FIELD_LAST_MESSAGE, newLastMsgMap);
-
-
-                                            db.batch()
-                                                    .update(centralRef, update)
-                                                    .update(senderRef, update)
-                                                    .update(receiverRef, update)
-                                                    .commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        Log.d(TAG, "onComplete: Update last message completed");
-                                                    }
-                                                }
-                                            });
                                         }
                                     }
                                 }
@@ -279,7 +266,8 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
         adapter.startListening();
     }
 
-    private void onListItemSelect(int position) {
+    @Override
+    public void onItemSelected(int position) {
         adapter.toggleSelection(position);//Toggle the selection
         Toast.makeText(this, "Selected " + position, Toast.LENGTH_SHORT).show();
         boolean hasCheckedItems = adapter.getSelectedCount() > 0;//Check if any items are already selected or not
@@ -300,8 +288,9 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
         if (mActionMode != null)
             //set action mode title on item selection
             mActionMode.setTitle(String.valueOf(adapter
-                    .getSelectedCount()) + " selected");
+                    .getSelectedCount()));
     }
+
 
     //Set action mode null after use
     public void setNullToActionMode() {
@@ -309,25 +298,6 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
             Log.d(TAG, "setNullToActionMode: Completed");
             mActionMode = null;
         }
-    }
-
-    private void setAdapterOnClick() {
-        rvMessages.addOnItemTouchListener(new MessageTouchListener(rvMessages,
-                new MessageClickListener() {
-                    @Override
-                    public void onClick(View view, int position) {
-                        if (mActionMode != null) {
-                            Log.d(TAG, "onClick: At " + position);
-                            onListItemSelect(position);
-                        }
-                    }
-
-                    @Override
-                    public void onLongClick(View view, int position) {
-                        Log.d(TAG, "onLongClick: At " + position);
-                        onListItemSelect(position);
-                    }
-                }));
     }
 
     public void onSendButtonClicked() {
@@ -476,14 +446,163 @@ public class ChatActivity extends AppCompatActivity implements OnMessageClickLis
     @Override
     public void onMessageClicked(int position) {
         Log.d(TAG, "onMessageClicked: At " + position);
-        onListItemSelect(position);
+        if (mActionMode != null) {
+            onItemSelected(position);
+        }
     }
 
     @Override
     public boolean onMessageLongClicked(int position) {
         Log.d(TAG, "onMessageLongClicked: At " + position);
-        onListItemSelect(position);
+        onItemSelected(position);
         return true;
+    }
+
+
+    class MessageActionModeCallBack implements ActionMode.Callback, DialogInterface.OnClickListener {
+        final String TAG = "ActionModeCallBack";
+
+        private MessageAdapter adapter;
+        SparseBooleanArray selected;
+        int selectedMessageSize;
+
+        public MessageActionModeCallBack(MessageAdapter adapter) {
+            this.adapter = adapter;
+            if (adapter != null) {
+                adapter.startListening();
+            }
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.message_menu, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
+            selected = adapter.getSelectedIds();
+            selectedMessageSize = selected.size();
+
+            switch (item.getItemId()) {
+                case R.id.action_copy:
+                    ClipboardManager clipboard = (ClipboardManager) App.getContext()
+                            .getSystemService(CLIPBOARD_SERVICE);
+
+                    StringBuffer builder = new StringBuffer();
+                    for (int i = (selectedMessageSize - 1); i >= 0; i--) {
+                        if (selected.valueAt(i)) {
+                            DocumentSnapshot message = adapter.getSnapshot(i);
+                            builder.append(message.getString(Message.FIELD_SENDER_NAME)
+                                    + ": "
+                                    + message.getString(Message.FIELD_CONTENT)
+                                    + "\n");
+                        }
+                    }
+                    ClipData clip = ClipData.newPlainText("Copy message", builder);
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(App.getContext(),
+                            App.getContext().getString(R.string.copy_message_success),
+                            Toast.LENGTH_SHORT)
+                            .show();
+                    mode.finish();
+                    break;
+
+                case R.id.action_delete:
+                    String arg, alertTitle;
+                    if (selectedMessageSize == adapter.getSelectedCount()) {
+                        arg = getString(R.string.arg_conversation);
+                    } else {
+                        if (selectedMessageSize > 1) {
+                            arg = getString(R.string.arg_messages);
+                        } else {
+                            arg = getString(R.string.arg_message);
+                        }
+                    }
+                    alertTitle = String.format(Locale.getDefault(),
+                            getString(R.string.delete_alert), arg);
+                    createDialog(alertTitle).show();
+                    mode.finish();
+                    break;
+                case R.id.action_forward:
+                    Toast.makeText(App.getContext(), "Function 'forward' is WIP",
+                            Toast.LENGTH_SHORT)
+                            .show();
+                case R.id.action_thumb_up:
+                    Toast.makeText(App.getContext(), "Function 'thumb' is WIP",
+                            Toast.LENGTH_SHORT)
+                            .show();
+                case R.id.action_thumb_down:
+                    Toast.makeText(App.getContext(), "Function 'thumb' is WIP",
+                            Toast.LENGTH_SHORT)
+                            .show();
+            }
+            return true;
+        }
+
+        private void deleteMessages() {
+            WriteBatch batch = FirebaseHelper.getFirestore().batch();
+            for (int i = (selected.size() - 1); i >= 0; i--) {
+                if (selected.valueAt(i)) {
+                    //get selected data in Model
+                    Log.d(TAG, "onActionItemClicked: index " + i);
+                    DocumentSnapshot message = adapter.getSnapshot(i);
+                    batch.delete(message.getReference());
+                }
+            }
+            batch.commit()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(App.getContext(),
+                                        String.format(Locale.getDefault(),
+                                                App.getContext().getString(R.string.delete_success), " message(s)"),
+                                        Toast.LENGTH_SHORT)
+                                        .show();
+                            } else {
+                                Toast.makeText(App.getContext(),
+                                        String.format(Locale.getDefault(),
+                                                App.getContext().getString(R.string.delete_fail), " message(s)"),
+                                        Toast.LENGTH_SHORT)
+                                        .show();
+                            }
+                        }
+                    });
+        }
+
+        private AlertDialog createDialog(String alertString) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
+            AlertDialog dialog;
+            dialog = builder
+                    .setMessage(alertString)
+                    .setPositiveButton(
+                            R.string.delete_okay, this)
+                    .setNegativeButton(
+                            R.string.cancel, this)
+                    .create();
+            return dialog;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (which == DialogInterface.BUTTON_NEGATIVE) {
+                dialog.dismiss();
+            } else if (which == DialogInterface.BUTTON_POSITIVE) {
+                deleteMessages();
+                dialog.dismiss();
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+
+        }
     }
 }
 

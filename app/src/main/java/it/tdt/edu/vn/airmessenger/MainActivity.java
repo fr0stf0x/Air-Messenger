@@ -11,6 +11,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -31,12 +33,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.tdt.edu.vn.airmessenger.adapters.MainPagerAdapter;
 import it.tdt.edu.vn.airmessenger.models.User;
 
@@ -63,6 +67,18 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.tvUsername)
+    TextView tvUserName;
+
+    @BindView(R.id.ivAvatar)
+    CircleImageView ivAvatar;
+
+    @BindView(R.id.tvOnlineStatus)
+    TextView tvOnlineStatus;
 
     @BindView(R.id.relativeLayout)
     RelativeLayout relativeLayout;
@@ -92,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
         updateUI();
-
     }
 
     private void setupFloatingActionButton() {
@@ -100,12 +115,6 @@ public class MainActivity extends AppCompatActivity {
         fabNewContact.hide();
         setupFabAnimation();
         setupFabAction();
-    }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
     }
 
     @Override
@@ -116,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
             viewPager.setCurrentItem(currentPage);
             Log.d("Get " + MainPagerAdapter.CURRENT_PAGE_NUMBER_KEY, currentPage + "");
         }
-
     }
 
     @Override
@@ -166,13 +174,19 @@ public class MainActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     userSnapshot = task.getResult();
                     if (userSnapshot.exists() && hasUserSignedIn()) {
-                        Log.d(TAG, userSnapshot.getId() + " is fetched");
-                        String toastMsg = String.format(Locale.getDefault(),
-                                getResources().getString(R.string.sign_old_notification),
-                                user.getDisplayName());
-                        Toast.makeText(MainActivity.this, toastMsg, Toast.LENGTH_SHORT).show();
+                        setSupportActionBar(toolbar);
                         ActionBar actionBar = getSupportActionBar();
-                        actionBar.setTitle(user.getDisplayName());
+                        actionBar.setTitle(null);
+                        tvUserName.setText(userSnapshot.getString(User.FIELD_NAME));
+                        if (userSnapshot.getString(User.FIELD_THUMB_IMAGE) != null &&
+                                !userSnapshot.getString(User.FIELD_THUMB_IMAGE)
+                                        .equals(getResources().getString(R.string.default_thumb_image))
+                                && !userSnapshot.getString(User.FIELD_THUMB_IMAGE).equals("")) {
+                            Picasso.get()
+                                    .load(userSnapshot.getString(User.FIELD_THUMB_IMAGE))
+                                    .placeholder(R.drawable.man_icon)
+                                    .into(ivAvatar);
+                        }
                     } else {
                         initUser();
                     }
@@ -196,13 +210,15 @@ public class MainActivity extends AppCompatActivity {
     private void initUser() {
         CollectionReference users = db.collection("users");
         HashMap<String, Object> userInfo = User.initUser(user);
-        String toastMsg = String.format(Locale.getDefault(),
-                getResources().getString(R.string.sign_new_notification),
-                user.getDisplayName(),
-                getResources().getString(R.string.app_name));
+        users.document(user.getUid()).set(userInfo).addOnCompleteListener(
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        updateUI();
+                    }
+                }
+        ); // Set REF
 
-        Toast.makeText(MainActivity.this, toastMsg, Toast.LENGTH_SHORT).show();
-        users.document(user.getUid()).set(userInfo); // Set REF
     }
 
     private void backToWelcomeScreen() {
